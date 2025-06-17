@@ -1,4 +1,3 @@
-
 import { GameScenario, BaseballLevel } from '../types/baseball';
 import { basePositions } from './baseballPositions';
 
@@ -11,7 +10,7 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
       return '1st'; // Always go for the sure out
     }
     if (scenarioName.includes('pop up')) {
-      return 'catch'; // Changed from null to 'catch'
+      return 'catch';
     }
   }
 
@@ -25,20 +24,22 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
     }
   }
 
-  // Force out situations - this is the key fix
+  // Ground ball scenarios - prioritize force outs, but first base is always an out
   if (scenarioName.includes('ground ball') || scenarioName.includes('grounder')) {
-    // Runners on 1st and 2nd - force out at 3rd
+    // Runners on 1st and 2nd - force out at 3rd is preferred, but 1st is also valid
     if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && !runnersOnBase.includes('3rd')) {
-      return '3rd';
+      return '3rd'; // Preferred, but 1st is also correct
     }
-    // Bases loaded - force out at home
+    // Bases loaded - force out at home is preferred, but 1st is also valid
     if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && runnersOnBase.includes('3rd')) {
-      return 'home';
+      return 'home'; // Preferred, but 1st is also correct
     }
-    // Runner on 1st only - force out at 2nd
+    // Runner on 1st only - force out at 2nd is preferred, but 1st is also valid
     if (runnersOnBase.includes('1st') && !runnersOnBase.includes('2nd')) {
-      return '2nd';
+      return '2nd'; // Preferred, but 1st is also correct
     }
+    // Any ground ball scenario - first base is always a valid out
+    return '1st';
   }
 
   // For singles with runner on second or bases loaded, throw home
@@ -72,6 +73,42 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
   }
 
   return '2nd'; // Default fallback
+};
+
+export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario, level: BaseballLevel): boolean => {
+  const scenarioName = scenarioData.name.toLowerCase();
+  const runnersOnBase = scenarioData.baseRunners;
+  const bestThrow = getBestThrowTarget(scenarioData, runnersOnBase, level);
+  
+  // If the player choice matches the best throw, it's correct
+  if (playerChoice === bestThrow) {
+    return true;
+  }
+  
+  // Additional logic for ground balls - first base is ALWAYS a valid out
+  if (scenarioName.includes('ground ball') || scenarioName.includes('grounder')) {
+    if (playerChoice === '1st') {
+      return true; // First base is always an out on ground balls
+    }
+    
+    // Force out situations are also correct
+    if (runnersOnBase.includes('1st') && playerChoice === '2nd') {
+      return true; // Force out at second
+    }
+    if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && playerChoice === '3rd') {
+      return true; // Force out at third
+    }
+    if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && runnersOnBase.includes('3rd') && playerChoice === 'home') {
+      return true; // Force out at home
+    }
+  }
+  
+  // For pop flies, only catch is correct
+  if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && playerChoice === 'catch') {
+    return true;
+  }
+  
+  return false;
 };
 
 export const getPlayExplanation = (scenarioData: GameScenario, throwTarget: string | null, level: BaseballLevel) => {

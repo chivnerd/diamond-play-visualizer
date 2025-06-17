@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { BaseballLevel, Player, Runner, Ball, GameScenario } from '../types/baseball';
 import { getPlayersForLevel, basePositions } from '../utils/baseballPositions';
 import { getScenariosForLevel } from '../utils/baseballLevels';
-import { getBestThrowTarget, getPlayExplanation } from '../utils/gameLogic';
+import { getBestThrowTarget, getPlayExplanation, isCorrectThrow } from '../utils/gameLogic';
 import BaseballFieldVisual from './baseball/BaseballFieldVisual';
 import GameControls from './baseball/GameControls';
 import PlayInfo from './baseball/PlayInfo';
@@ -132,7 +132,7 @@ const BaseballField = () => {
   };
 
   const handlePlayerDecision = (playerChoice: string) => {
-    const isCorrect = playerChoice === correctThrowTarget;
+    const isCorrect = isCorrectThrow(playerChoice, currentScenario!, level);
     setPlayerDecisionCorrect(isCorrect);
     setAwaitingDecision(false);
 
@@ -140,7 +140,7 @@ const BaseballField = () => {
       // Increment chicken score and show unicorn celebration
       setChickenScore(prev => prev + 1);
       setShowUnicorn(true);
-      setTimeout(() => setShowUnicorn(false), 3000);
+      setTimeout(() => setShowUnicorn(false), 6000);
     }
 
     // Animate the ball to the chosen location (but not for catches)
