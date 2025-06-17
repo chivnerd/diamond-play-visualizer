@@ -68,41 +68,41 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
 
     if (isCorrect) {
       if (playerChoice === 'catch-throw-2nd' && runners.includes('1st')) {
-        return "Good choice! You caught the ball for one out. Throwing to second might get the runner, but it's not guaranteed - that's why this earns 1 chicken, not 2.";
+        return "SIGMA move! You caught that ball like a GOAT. Throwing to second is mid rizz but still gets you that chicken, no cap! 💯";
       } else if (playerChoice === 'catch-tag-1st' && runners.includes('1st')) {
-        return "EXCELLENT! This is a DOUBLE PLAY! Catch the ball for one out, then tag first base before the runner returns. Two guaranteed outs = 2 CHICKENS!";
+        return "YOOO THAT'S BUSSIN! 🔥🔥 This is straight up GIGACHAD behavior! Double play = MAXIMUM RIZZ! Two chickens because you're literally HIM! W play fr fr! 💪";
       } else if (playerChoice === 'catch') {
-        return "Perfect! You made the smart, safe play. Getting the sure out is always a good decision.";
+        return "Based and valid! You chose the safe play like a true sigma. Sometimes the smart move is the W move. Respect! 🗿";
       } else if (playerChoice === '1st' && (scenarioName.includes('ground ball') || scenarioName.includes('grounder') || scenarioName.includes('chopper') || scenarioName.includes('roller'))) {
-        return "Great choice! First base is always a sure out on ground balls. When in doubt, take the guaranteed out!";
+        return "SHEEEESH! 🔥 First base = GUARANTEED DUB! You understood the assignment and said NO to crash outs! Absolute unit behavior! 💪";
       } else {
-        return "Excellent decision! This was the optimal play for this situation.";
+        return "YESSIR! You just locked in and made the optimal play! That's some galaxy brain energy right there! Keep serving these Ws! 🧠✨";
       }
     } else {
       // Incorrect choice explanations
       if (scenarioName.includes('ground ball') || scenarioName.includes('grounder') || scenarioName.includes('chopper') || scenarioName.includes('roller')) {
         if (correctChoice === '1st') {
-          return "On ground balls, first base is always a sure out! Don't risk a throwing error on a harder play when you can get the guaranteed out.";
+          return "Bruh... first base is literally free real estate! 💀 Don't get fancy when you can secure the bag! That's a certified L moment, learn from this mid play! 📉";
         } else if (correctChoice === 'home' && runners.includes('1st') && runners.includes('2nd') && runners.includes('3rd')) {
-          return "With bases loaded, the runner from third will score easily. Throw home to prevent the run, but first base is also acceptable for the sure out.";
+          return "Nah fam, bases loaded = throw home IMMEDIATELY! 🏠 Don't let them score, that's how you take Ls! First base is mid when runs are on the line! 😤";
         } else if (correctChoice === '3rd' && runners.includes('1st') && runners.includes('2nd')) {
-          return "With runners on first and second, you can get a force out at third base to prevent the lead runner from reaching scoring position.";
+          return "Yikes! Force out at third = BIG BRAIN PLAY! 🧠 Stop that lead runner from reaching the danger zone! You fumbled the bag on this one chief! 📦";
         } else if (correctChoice === '2nd' && runners.includes('1st')) {
-          return "With a runner on first, you can get a force out at second base. The runner must run, so it's an easier play than first base.";
+          return "Oof, that's rough buddy! 😬 Force out at second is EASY MODE - they HAVE to run! Don't make it harder than it needs to be! Stay woke! 👁️";
         }
       }
 
       if (scenarioName.includes('single')) {
         if (correctChoice === 'home' && (runners.includes('2nd') || runners.length >= 2)) {
-          return "Runners on second base can easily score on singles. Throw home to prevent the run from scoring!";
+          return "MAJOR L! 💀 Runners on second base are SPEED RUNNING to home plate! Throw home or catch that L! Don't let them cook you like that! 🍳";
         } else if (correctChoice === '3rd' && runners.includes('1st') && !runners.includes('2nd')) {
-          return "The runner from first will advance to third, putting them in scoring position. Throw to third to keep them at second base.";
+          return "BRO YOU SLEPT! 😴 That runner is about to be in SCORING POSITION! Third base throw keeps them humble! You just let them level up for free! 📈";
         } else if (correctChoice === '2nd' && runners.length === 0) {
-          return "With no pressure from base runners, prevent the batter from reaching scoring position by throwing to second base.";
+          return "Bro what are you doing?! 🤦‍♂️ No pressure = throw to second and keep them off the scoreboard! That's some NPC behavior right there! 🤖";
         }
       }
 
-      return "Study the situation more carefully. Consider where runners are and which play gives you the best chance for an out or prevents runs from scoring.";
+      return "That ain't it chief! 💀 You gotta stay locked in and think about the play! Don't let the other team farm Ws off you! Study the meta! 📚";
     }
   };
 
@@ -122,7 +122,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
             fontFamily: 'monospace',
             textShadow: '2px 2px 0px #FFFFFF'
           }}>
-            {isCorrect ? (isDouble ? '🐔🐔 2 CHICKENS! 🐔🐔' : '🐔 CHICKEN! 🐔') : '🚫 NO CHICKEN! 🚫'}
+            {isCorrect ? (isDouble ? '🐔🐔 DOUBLE CHICKEN W! 🐔🐔' : '🐔 CHICKEN SECURED! 🐔') : '🚫 NO CHICKEN L + RATIO! 🚫'}
           </DialogTitle>
         </DialogHeader>
         
@@ -134,17 +134,17 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
             imageRendering: 'pixelated'
           }}>
             <h4 className={`font-bold ${isCorrect ? 'text-green-900' : 'text-red-900'} font-mono mb-2`} style={{ fontFamily: 'monospace' }}>
-              WHAT HAPPENED:
+              WHAT JUST HAPPENED FR:
             </h4>
             <p className={`${isCorrect ? 'text-green-800' : 'text-red-800'} font-mono text-sm`} style={{ fontFamily: 'monospace' }}>
-              You chose: <strong>{getChoiceLabel(playerChoice)}</strong>
+              Your play: <strong>{getChoiceLabel(playerChoice)}</strong>
             </p>
             <p className={`${isCorrect ? 'text-green-800' : 'text-red-800'} font-mono text-sm`} style={{ fontFamily: 'monospace' }}>
-              Best choice: <strong>{getChoiceLabel(correctChoice)}</strong>
+              Chad move: <strong>{getChoiceLabel(correctChoice)}</strong>
             </p>
             {isCorrect && (
               <p className="text-green-800 font-mono text-sm font-bold" style={{ fontFamily: 'monospace' }}>
-                Chickens earned: {isDouble ? '2' : '1'}
+                Chickens farmed: {isDouble ? '2 (GIGA BASED)' : '1 (VALID)'}
               </p>
             )}
           </div>
@@ -154,7 +154,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
             imageRendering: 'pixelated'
           }}>
             <h4 className="font-bold text-blue-900 font-mono mb-2" style={{ fontFamily: 'monospace' }}>
-              {isCorrect ? 'WHY THIS WORKED:' : 'WHY THIS MATTERS:'}
+              {isCorrect ? 'WHY THIS IS FIRE:' : 'HOW TO NOT BE MID:'}
             </h4>
             <p className="text-blue-800 font-mono text-sm" style={{ fontFamily: 'monospace' }}>
               {getExplanation()}
@@ -166,7 +166,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
             imageRendering: 'pixelated'
           }}>
             <p className="text-yellow-900 font-mono text-center font-bold text-sm" style={{ fontFamily: 'monospace' }}>
-              💡 TIP: {isCorrect ? 'Keep making smart decisions like this!' : 'Think about which play gives you the best chance for an out or prevents runs!'}
+              💡 PRO TIP: {isCorrect ? 'Keep serving these Ws! You are HIM! 👑' : 'Lock in and think about the plays! Dont let them catch you lacking! 🔒'}
             </p>
           </div>
 
@@ -180,7 +180,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
               fontFamily: 'monospace'
             }}
           >
-            {isCorrect ? 'NICE! NEXT PLAY' : 'GOT IT! TRY AGAIN'}
+            {isCorrect ? 'LETS GOOO! NEXT BATTER' : 'BET! RUN IT BACK'}
           </Button>
         </div>
       </DialogContent>
