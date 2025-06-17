@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -144,7 +143,7 @@ const BaseballField = () => {
       setTimeout(() => setShowUnicorn(false), 3000);
     }
 
-    // Animate the ball to the chosen location
+    // Animate the ball to the chosen location (but not for catches)
     if (playerChoice && playerChoice !== 'catch') {
       const throwPosition = basePositions[playerChoice as keyof typeof basePositions];
       setBall(prev => ({
@@ -162,7 +161,7 @@ const BaseballField = () => {
       const explanation = getPlayExplanation(currentScenario!, correctThrowTarget, level);
       setPlayExplanation(explanation);
       setPlayComplete(true);
-    }, 1000);
+    }, playerChoice === 'catch' ? 500 : 1000); // Shorter delay for catches
   };
 
   const nextBatter = () => {

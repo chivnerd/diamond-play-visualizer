@@ -11,7 +11,7 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
       return '1st'; // Always go for the sure out
     }
     if (scenarioName.includes('pop up')) {
-      return null; // Catch for out
+      return 'catch'; // Changed from null to 'catch'
     }
   }
 
@@ -22,6 +22,22 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
     }
     if (runnersOnBase.includes('1st')) {
       return '2nd'; // Force out at second
+    }
+  }
+
+  // Force out situations - this is the key fix
+  if (scenarioName.includes('ground ball') || scenarioName.includes('grounder')) {
+    // Runners on 1st and 2nd - force out at 3rd
+    if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && !runnersOnBase.includes('3rd')) {
+      return '3rd';
+    }
+    // Bases loaded - force out at home
+    if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && runnersOnBase.includes('3rd')) {
+      return 'home';
+    }
+    // Runner on 1st only - force out at 2nd
+    if (runnersOnBase.includes('1st') && !runnersOnBase.includes('2nd')) {
+      return '2nd';
     }
   }
 
@@ -40,9 +56,9 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
     return 'home';
   }
 
-  // For pop flies, no throw needed (catch for out)
-  if (scenarioName.includes('pop fly')) {
-    return null;
+  // For pop flies, catch for out
+  if (scenarioName.includes('pop fly') || scenarioName.includes('pop up')) {
+    return 'catch';
   }
 
   // Default to second base for singles with no runners
