@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Ball, BaseballLevel } from '../../types/baseball';
@@ -7,9 +6,10 @@ interface PlayInfoProps {
   scenario: string;
   level: BaseballLevel;
   ball: Ball;
+  playerDecisionCorrect?: boolean | null;
 }
 
-const PlayInfo: React.FC<PlayInfoProps> = ({ scenario, level, ball }) => {
+const PlayInfo: React.FC<PlayInfoProps> = ({ scenario, level, ball, playerDecisionCorrect }) => {
   if (!scenario) {
     return (
       <Card className="p-6 border-4 border-stone-800 mb-4" style={{ 
@@ -61,6 +61,19 @@ const PlayInfo: React.FC<PlayInfoProps> = ({ scenario, level, ball }) => {
           <h4 className="font-semibold text-blue-900 font-mono" style={{ fontFamily: 'monospace' }}>{scenario}</h4>
           <p className="text-sm text-blue-900 font-mono mt-1" style={{ fontFamily: 'monospace' }}>Level: {level.toUpperCase().replace('-', ' ')}</p>
         </div>
+
+        {playerDecisionCorrect !== null && (
+          <div className={`p-3 border-4 ${playerDecisionCorrect ? 'border-green-600' : 'border-red-600'}`} style={{
+            background: playerDecisionCorrect 
+              ? 'linear-gradient(145deg, #58D68D 0%, #27AE60 50%, #58D68D 100%)' 
+              : 'linear-gradient(145deg, #F1948A 0%, #E74C3C 50%, #F1948A 100%)',
+            imageRendering: 'pixelated'
+          }}>
+            <h5 className={`font-semibold font-mono ${playerDecisionCorrect ? 'text-green-900' : 'text-red-900'}`} style={{ fontFamily: 'monospace' }}>
+              {playerDecisionCorrect ? '🐔 CORRECT! YOU GOT A CHICKEN!' : '❌ WRONG! NO CHICKEN THIS TIME...'}
+            </h5>
+          </div>
+        )}
         
         {ball.isThrown && ball.throwTarget && (
           <div className="p-3 border-4 border-orange-600" style={{

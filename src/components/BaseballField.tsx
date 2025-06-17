@@ -11,6 +11,8 @@ import GameControls from './baseball/GameControls';
 import PlayInfo from './baseball/PlayInfo';
 import PlayAnalysis from './baseball/PlayAnalysis';
 import LevelInfo from './baseball/LevelInfo';
+import DecisionPanel from './baseball/DecisionPanel';
+import CelebrationUnicorn from './baseball/CelebrationUnicorn';
 
 const BaseballField = () => {
   const [level, setLevel] = useState<BaseballLevel>('majors');
@@ -30,6 +32,10 @@ const BaseballField = () => {
   const [currentScenario, setCurrentScenario] = useState<GameScenario | null>(null);
   const [playComplete, setPlayComplete] = useState(false);
   const [playExplanation, setPlayExplanation] = useState<string>('');
+  const [awaitingDecision, setAwaitingDecision] = useState(false);
+  const [correctThrowTarget, setCorrectThrowTarget] = useState<string | null>(null);
+  const [showUnicorn, setShowUnicorn] = useState(false);
+  const [playerDecisionCorrect, setPlayerDecisionCorrect] = useState<boolean | null>(null);
 
   // Initialize players when level changes
   useEffect(() => {
@@ -41,6 +47,9 @@ const BaseballField = () => {
     
     setPlayComplete(false);
     setPlayExplanation('');
+    setAwaitingDecision(false);
+    setShowUnicorn(false);
+    setPlayerDecisionCorrect(null);
     
     // Pick a random scenario based on level
     const availableScenarios = getScenariosForLevel(level);
@@ -105,7 +114,7 @@ const BaseballField = () => {
       }
     }, 500);
 
-    // After runners move, throw ball to correct base
+    // After ball movement, ask for player decision
     setTimeout(() => {
       setRunners(prev => prev.map(runner => ({
         ...runner,
@@ -114,28 +123,44 @@ const BaseballField = () => {
         isRunning: false
       })));
 
-      // Determine where to throw the ball
+      // Determine the correct throw target
       const throwTarget = getBestThrowTarget(randomScenario, randomScenario.baseRunners, level);
-      if (throwTarget) {
-        const throwPosition = basePositions[throwTarget as keyof typeof basePositions];
-        setBall(prev => ({
-          ...prev,
-          targetX: throwPosition.x,
-          targetY: throwPosition.y,
-          isMoving: true,
-          isThrown: true,
-          throwTarget
-        }));
-      }
+      setCorrectThrowTarget(throwTarget);
+      setAwaitingDecision(true);
+      setIsAnimating(false);
+    }, 2000);
+  };
 
-      // Generate detailed explanation after the throw
-      setTimeout(() => {
-        const explanation = getPlayExplanation(randomScenario, throwTarget, level);
-        setPlayExplanation(explanation);
-        setPlayComplete(true);
-        setIsAnimating(false);
-      }, 1000);
-    }, 3000);
+  const handlePlayerDecision = (playerChoice: string) => {
+    const isCorrect = playerChoice === correctThrowTarget;
+    setPlayerDecisionCorrect(isCorrect);
+    setAwaitingDecision(false);
+
+    if (isCorrect) {
+      // Show unicorn celebration
+      setShowUnicorn(true);
+      setTimeout(() => setShowUnicorn(false), 3000);
+    }
+
+    // Animate the ball to the chosen location
+    if (playerChoice && playerChoice !== 'catch') {
+      const throwPosition = basePositions[playerChoice as keyof typeof basePositions];
+      setBall(prev => ({
+        ...prev,
+        targetX: throwPosition.x,
+        targetY: throwPosition.y,
+        isMoving: true,
+        isThrown: true,
+        throwTarget: playerChoice
+      }));
+    }
+
+    // Generate explanation after decision
+    setTimeout(() => {
+      const explanation = getPlayExplanation(currentScenario!, correctThrowTarget, level);
+      setPlayExplanation(explanation);
+      setPlayComplete(true);
+    }, 1000);
   };
 
   const nextBatter = () => {
@@ -165,6 +190,10 @@ const BaseballField = () => {
     setIsAnimating(false);
     setPlayComplete(false);
     setPlayExplanation('');
+    setAwaitingDecision(false);
+    setShowUnicorn(false);
+    setPlayerDecisionCorrect(null);
+    setCorrectThrowTarget(null);
   };
 
   useEffect(() => {
@@ -202,7 +231,7 @@ const BaseballField = () => {
 
       <div className="flex gap-6">
         <div className="flex-1">
-          <Card className="p-6 border-4 border-stone-800 shadow-2xl" style={{ 
+          <Card className="p-6 border-4 border-stone-800 shadow-2xl relative" style={{ 
             background: 'linear-gradient(145deg, #8B7355 0%, #A0522D 50%, #8B7355 100%)',
             imageRendering: 'pixelated',
             boxShadow: '8px 8px 0px #4A4A4A, 12px 12px 0px rgba(0,0,0,0.3)'
@@ -233,19 +262,29 @@ const BaseballField = () => {
 
             <BaseballFieldVisual players={players} runners={runners} ball={ball} />
 
-            <GameControls
-              onStartScenario={startScenario}
-              onNextBatter={nextBatter}
-              onReset={resetField}
-              isAnimating={isAnimating}
-              playComplete={playComplete}
-            />
+            {awaitingDecision ? (
+              <DecisionPanel
+                scenario={currentScenario}
+                level={level}
+                onDecision={handlePlayerDecision}
+              />
+            ) : (
+              <GameControls
+                onStartScenario={startScenario}
+                onNextBatter={nextBatter}
+                onReset={resetField}
+                isAnimating={isAnimating}
+                playComplete={playComplete}
+              />
+            )}
+
+            {showUnicorn && <CelebrationUnicorn />}
           </Card>
         </div>
 
         <div className="w-80">
           {!playComplete ? (
-            <PlayInfo scenario={scenario} level={level} ball={ball} />
+            <PlayInfo scenario={scenario} level={level} ball={ball} playerDecisionCorrect={playerDecisionCorrect} />
           ) : (
             <PlayAnalysis playExplanation={playExplanation} />
           )}
