@@ -12,7 +12,7 @@ interface Player {
   originalX: number;
   originalY: number;
   isActive: boolean;
-  role: 'fielder' | 'backup' | 'cover' | 'normal';
+  role: 'fielder' | 'backup' | 'cover' | 'cutoff' | 'normal';
 }
 
 interface Runner {
@@ -47,7 +47,6 @@ const BaseballField = () => {
   ]);
 
   const [runners, setRunners] = useState<Runner[]>([]);
-
   const [ball, setBall] = useState<Ball>({
     x: 250,
     y: 350,
@@ -66,89 +65,187 @@ const BaseballField = () => {
     '3rd': { x: 180, y: 280 }
   };
 
-  const generateRunners = () => {
-    const possibleBases: ('1st' | '2nd' | '3rd')[] = ['1st', '2nd', '3rd'];
-    const numRunners = Math.floor(Math.random() * 3) + 1; // 1-3 runners
-    const occupiedBases = possibleBases.sort(() => 0.5 - Math.random()).slice(0, numRunners);
-    
-    return occupiedBases.map((base, index) => ({
-      id: `R${index + 1}`,
-      base,
-      x: basePositions[base].x,
-      y: basePositions[base].y,
-      targetX: basePositions[base].x,
-      targetY: basePositions[base].y,
-      isRunning: false
-    }));
-  };
-
+  // Accurate defensive scenarios based on the guide
   const scenarios = [
     {
-      name: 'Ground ball to shortstop with runner on 1st',
-      ballTarget: { x: 220, y: 220 },
+      name: 'Single to left: bases empty',
+      ballTarget: { x: 120, y: 120 },
+      baseRunners: [],
       movements: [
-        { playerId: 'SS', x: 220, y: 220, role: 'fielder' as const },
-        { playerId: '2B', x: 270, y: 240, role: 'cover' as const },
-        { playerId: 'CF', x: 220, y: 180, role: 'backup' as const },
-        { playerId: '1B', x: 300, y: 260, role: 'cover' as const }
+        { playerId: 'LF', x: 120, y: 120, role: 'fielder' as const },
+        { playerId: 'SS', x: 200, y: 200, role: 'cutoff' as const }, // Cut-off between LF and 2nd
+        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd base
+        { playerId: 'CF', x: 180, y: 100, role: 'backup' as const }, // Back up LF
+        { playerId: 'P', x: 230, y: 250, role: 'backup' as const }, // Back up throw to 2nd
+        { playerId: '1B', x: 300, y: 270, role: 'cover' as const }, // Check batter touches 1st, then cover inside
+        { playerId: 'C', x: 290, y: 330, role: 'backup' as const }, // Cover 1st in case of wide turn
+        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
+        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Move toward infield for poor throws
+      ],
+      runnerTargets: []
+    },
+    {
+      name: 'Single to center: bases empty',
+      ballTarget: { x: 250, y: 80 },
+      baseRunners: [],
+      movements: [
+        { playerId: 'CF', x: 250, y: 80, role: 'fielder' as const },
+        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Take throw at 2nd
+        { playerId: 'SS', x: 230, y: 180, role: 'cutoff' as const }, // Cut-off for 2nd base
+        { playerId: 'LF', x: 200, y: 100, role: 'backup' as const }, // Back up CF
+        { playerId: 'RF', x: 300, y: 100, role: 'backup' as const }, // Back up CF
+        { playerId: 'P', x: 250, y: 250, role: 'backup' as const }, // Back up throw to 2nd
+        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Make sure batter touches 1st
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
+        { playerId: '3B', x: 180, y: 280, role: 'cover' as const } // Cover 3rd
+      ],
+      runnerTargets: []
+    },
+    {
+      name: 'Single to right: bases empty',
+      ballTarget: { x: 380, y: 120 },
+      baseRunners: [],
+      movements: [
+        { playerId: 'RF', x: 380, y: 120, role: 'fielder' as const },
+        { playerId: '2B', x: 300, y: 200, role: 'cutoff' as const }, // Cut-off between RF and 2nd
+        { playerId: 'SS', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd base
+        { playerId: 'CF', x: 320, y: 100, role: 'backup' as const }, // Back up RF
+        { playerId: 'P', x: 270, y: 250, role: 'backup' as const }, // Back up throw to 2nd
+        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Check batter touches 1st
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
+        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
+        { playerId: 'LF', x: 180, y: 180, role: 'backup' as const } // Move toward infield for bad throws
+      ],
+      runnerTargets: []
+    },
+    {
+      name: 'Single to left: runner on first',
+      ballTarget: { x: 120, y: 120 },
+      baseRunners: ['1st'],
+      movements: [
+        { playerId: 'LF', x: 120, y: 120, role: 'fielder' as const },
+        { playerId: 'SS', x: 200, y: 240, role: 'cutoff' as const }, // Cut-off between LF and 3rd
+        { playerId: '3B', x: 170, y: 270, role: 'backup' as const }, // Back up SS but cover 3rd
+        { playerId: 'CF', x: 180, y: 100, role: 'backup' as const }, // Back up LF
+        { playerId: 'P', x: 220, y: 260, role: 'backup' as const }, // Back up 3rd base
+        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Check batter touches 1st
+        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
+        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Move toward infield
+      ],
+      runnerTargets: [
+        { base: '1st' as const, targetBase: '3rd' as const }
+      ]
+    },
+    {
+      name: 'Single to center: runner on first',
+      ballTarget: { x: 250, y: 80 },
+      baseRunners: ['1st'],
+      movements: [
+        { playerId: 'CF', x: 250, y: 80, role: 'fielder' as const },
+        { playerId: 'SS', x: 220, y: 240, role: 'cutoff' as const }, // Cut-off between CF and 3rd
+        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd base
+        { playerId: 'LF', x: 200, y: 100, role: 'backup' as const }, // Back up CF
+        { playerId: 'RF', x: 300, y: 100, role: 'backup' as const }, // Back up CF
+        { playerId: 'P', x: 210, y: 260, role: 'backup' as const }, // Back up 3rd
+        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Make sure batter touches 1st
+        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const } // Cover home
+      ],
+      runnerTargets: [
+        { base: '1st' as const, targetBase: '3rd' as const }
+      ]
+    },
+    {
+      name: 'Single to left: runner on second',
+      ballTarget: { x: 120, y: 120 },
+      baseRunners: ['2nd'],
+      movements: [
+        { playerId: 'LF', x: 120, y: 120, role: 'fielder' as const },
+        { playerId: '3B', x: 210, y: 300, role: 'cutoff' as const }, // Cut-off for throw to home
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home plate
+        { playerId: 'P', x: 240, y: 330, role: 'backup' as const }, // Back up throw at home
+        { playerId: 'CF', x: 180, y: 100, role: 'backup' as const }, // Back up LF
+        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Check batter touches 1st
+        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
+        { playerId: 'SS', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
+        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Back up throw to 2nd
+      ],
+      runnerTargets: [
+        { base: '2nd' as const, targetBase: 'home' as const }
+      ]
+    },
+    {
+      name: 'Sacrifice bunt: runner on first',
+      ballTarget: { x: 230, y: 320 },
+      baseRunners: ['1st'],
+      movements: [
+        { playerId: 'P', x: 240, y: 300, role: 'fielder' as const }, // Cover middle of field
+        { playerId: '3B', x: 200, y: 320, role: 'fielder' as const }, // Charge toward home, cover left side
+        { playerId: '1B', x: 280, y: 300, role: 'fielder' as const }, // Charge, cover right side
+        { playerId: '2B', x: 320, y: 280, role: 'cover' as const }, // Cover 1st base
+        { playerId: 'SS', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd base
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Tell infielders where to throw
+        { playerId: 'LF', x: 160, y: 200, role: 'backup' as const }, // Come toward infield for bad throws
+        { playerId: 'CF', x: 250, y: 150, role: 'backup' as const }, // Back up throw to 2nd
+        { playerId: 'RF', x: 350, y: 200, role: 'backup' as const } // Back up throw to 1st
       ],
       runnerTargets: [
         { base: '1st' as const, targetBase: '2nd' as const }
       ]
     },
     {
-      name: 'Fly ball to right field with runners on 1st and 2nd',
-      ballTarget: { x: 380, y: 120 },
+      name: 'Double down left field line: bases empty',
+      ballTarget: { x: 80, y: 160 },
+      baseRunners: [],
       movements: [
-        { playerId: 'RF', x: 380, y: 120, role: 'fielder' as const },
-        { playerId: 'CF', x: 320, y: 100, role: 'backup' as const },
-        { playerId: '1B', x: 300, y: 260, role: 'cover' as const },
-        { playerId: '2B', x: 270, y: 240, role: 'cover' as const }
+        { playerId: 'LF', x: 80, y: 160, role: 'fielder' as const },
+        { playerId: 'SS', x: 150, y: 200, role: 'cutoff' as const }, // Cut-off down left field line
+        { playerId: '2B', x: 200, y: 180, role: 'backup' as const }, // Trail position behind SS
+        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd base
+        { playerId: 'CF', x: 150, y: 120, role: 'backup' as const }, // Back up LF
+        { playerId: 'P', x: 210, y: 260, role: 'backup' as const }, // Back up 3rd base
+        { playerId: '1B', x: 300, y: 260, role: 'cover' as const }, // Trail runner to 2nd
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
+        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Back up throw to 2nd
       ],
-      runnerTargets: [
-        { base: '1st' as const, targetBase: '1st' as const }, // stays put on fly ball
-        { base: '2nd' as const, targetBase: '3rd' as const }
-      ]
+      runnerTargets: []
     },
     {
-      name: 'Ground ball to third base with bases loaded',
-      ballTarget: { x: 180, y: 280 },
+      name: 'Pop fly to shallow right field',
+      ballTarget: { x: 340, y: 180 },
+      baseRunners: [],
       movements: [
-        { playerId: '3B', x: 180, y: 280, role: 'fielder' as const },
-        { playerId: 'SS', x: 200, y: 240, role: 'cover' as const },
-        { playerId: 'LF', x: 150, y: 220, role: 'backup' as const },
-        { playerId: 'C', x: 250, y: 340, role: 'cover' as const }
+        { playerId: 'RF', x: 340, y: 180, role: 'fielder' as const }, // RF has priority
+        { playerId: '2B', x: 310, y: 200, role: 'backup' as const }, // Call for catch but yield to RF
+        { playerId: '1B', x: 320, y: 260, role: 'backup' as const }, // Call for catch but yield to RF
+        { playerId: 'CF', x: 320, y: 140, role: 'backup' as const }, // Back up RF
+        { playerId: 'SS', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
+        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
+        { playerId: 'P', x: 290, y: 250, role: 'cover' as const }, // Cover 1st if needed
+        { playerId: 'C', x: 280, y: 330, role: 'backup' as const }, // Back up 1st if bases empty
+        { playerId: 'LF', x: 150, y: 200, role: 'backup' as const } // Back up throw to 3rd
+      ],
+      runnerTargets: []
+    },
+    {
+      name: 'Wheel play: sacrifice bunt with runners on 1st and 2nd',
+      ballTarget: { x: 220, y: 320 },
+      baseRunners: ['1st', '2nd'],
+      movements: [
+        { playerId: 'P', x: 240, y: 300, role: 'fielder' as const }, // Cover middle field
+        { playerId: '3B', x: 200, y: 320, role: 'fielder' as const }, // Charge and cover left side
+        { playerId: '1B', x: 280, y: 300, role: 'fielder' as const }, // Cover right side
+        { playerId: 'SS', x: 170, y: 270, role: 'cover' as const }, // Break for 3rd base for force out
+        { playerId: '2B', x: 320, y: 280, role: 'cover' as const }, // Cover 1st base
+        { playerId: 'CF', x: 250, y: 150, role: 'cover' as const }, // Cover 2nd base (no one else covering)
+        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Tell infielders where to throw
+        { playerId: 'LF', x: 150, y: 250, role: 'backup' as const }, // Back up throw to 3rd
+        { playerId: 'RF', x: 350, y: 200, role: 'backup' as const } // Back up throw to 1st
       ],
       runnerTargets: [
         { base: '1st' as const, targetBase: '2nd' as const },
-        { base: '2nd' as const, targetBase: '3rd' as const },
-        { base: '3rd' as const, targetBase: 'home' as const }
-      ]
-    },
-    {
-      name: 'Line drive to center field with runner on 2nd',
-      ballTarget: { x: 250, y: 80 },
-      movements: [
-        { playerId: 'CF', x: 250, y: 80, role: 'fielder' as const },
-        { playerId: 'LF', x: 200, y: 100, role: 'backup' as const },
-        { playerId: 'RF', x: 300, y: 100, role: 'backup' as const },
-        { playerId: '2B', x: 270, y: 240, role: 'cover' as const }
-      ],
-      runnerTargets: [
-        { base: '2nd' as const, targetBase: '3rd' as const }
-      ]
-    },
-    {
-      name: 'Ground ball to first base with runner on 3rd',
-      ballTarget: { x: 320, y: 280 },
-      movements: [
-        { playerId: '1B', x: 320, y: 280, role: 'fielder' as const },
-        { playerId: 'P', x: 300, y: 260, role: 'cover' as const },
-        { playerId: 'RF', x: 350, y: 200, role: 'backup' as const },
-        { playerId: 'C', x: 250, y: 340, role: 'cover' as const }
-      ],
-      runnerTargets: [
-        { base: '3rd' as const, targetBase: 'home' as const }
+        { base: '2nd' as const, targetBase: '2nd' as const } // Gets forced out at 3rd
       ]
     }
   ];
@@ -156,19 +253,21 @@ const BaseballField = () => {
   const startScenario = () => {
     if (isAnimating) return;
     
-    // Generate random runners first
-    const newRunners = generateRunners();
+    // Pick a random scenario
+    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+    
+    // Set up runners based on scenario
+    const newRunners = randomScenario.baseRunners.map((base, index) => ({
+      id: `R${index + 1}`,
+      base: base as 'home' | '1st' | '2nd' | '3rd',
+      x: basePositions[base as keyof typeof basePositions].x,
+      y: basePositions[base as keyof typeof basePositions].y,
+      targetX: basePositions[base as keyof typeof basePositions].x,
+      targetY: basePositions[base as keyof typeof basePositions].y,
+      isRunning: false
+    }));
+    
     setRunners(newRunners);
-    
-    // Find compatible scenario based on runners
-    const compatibleScenarios = scenarios.filter(s => 
-      s.runnerTargets.every(rt => newRunners.some(r => r.base === rt.base))
-    );
-    
-    const randomScenario = compatibleScenarios.length > 0 
-      ? compatibleScenarios[Math.floor(Math.random() * compatibleScenarios.length)]
-      : scenarios[Math.floor(Math.random() * scenarios.length)];
-    
     setScenario(randomScenario.name);
     setIsAnimating(true);
 
@@ -197,19 +296,21 @@ const BaseballField = () => {
       }));
 
       // Animate runners
-      setRunners(prev => prev.map(runner => {
-        const runnerTarget = randomScenario.runnerTargets.find(rt => rt.base === runner.base);
-        if (runnerTarget) {
-          const targetPos = basePositions[runnerTarget.targetBase];
-          return {
-            ...runner,
-            targetX: targetPos.x,
-            targetY: targetPos.y,
-            isRunning: true
-          };
-        }
-        return runner;
-      }));
+      if (randomScenario.runnerTargets.length > 0) {
+        setRunners(prev => prev.map(runner => {
+          const runnerTarget = randomScenario.runnerTargets.find(rt => rt.base === runner.base);
+          if (runnerTarget) {
+            const targetPos = basePositions[runnerTarget.targetBase];
+            return {
+              ...runner,
+              targetX: targetPos.x,
+              targetY: targetPos.y,
+              isRunning: true
+            };
+          }
+          return runner;
+        }));
+      }
     }, 500);
 
     setTimeout(() => {
@@ -262,6 +363,7 @@ const BaseballField = () => {
       case 'fielder': return 'bg-blue-500';
       case 'backup': return 'bg-yellow-500';
       case 'cover': return 'bg-green-500';
+      case 'cutoff': return 'bg-purple-500';
       default: return 'bg-gray-400';
     }
   };
@@ -271,6 +373,7 @@ const BaseballField = () => {
       case 'fielder': return 'Fields the ball';
       case 'backup': return 'Backs up the play';
       case 'cover': return 'Covers the base';
+      case 'cutoff': return 'Cut-off man';
       default: return '';
     }
   };
@@ -279,7 +382,7 @@ const BaseballField = () => {
     <div className="w-full max-w-6xl mx-auto p-6">
       <div className="text-center mb-6">
         <h1 className="text-4xl font-bold text-green-800 mb-2">⚾ Baseball Defense Trainer</h1>
-        <p className="text-lg text-gray-600">Learn where players move when the ball is hit!</p>
+        <p className="text-lg text-gray-600">Learn accurate defensive positioning from real baseball situations!</p>
       </div>
 
       <div className="flex gap-6">
@@ -395,6 +498,10 @@ const BaseballField = () => {
                       <span>Fields the ball</span>
                     </div>
                     <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
+                      <span>Cut-off man</span>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
                       <span>Backs up the play</span>
                     </div>
@@ -410,18 +517,19 @@ const BaseballField = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-600">Click "Hit the Ball!" to see a random defensive scenario with runners.</p>
+              <p className="text-gray-600">Click "Hit the Ball!" to see accurate defensive scenarios based on real baseball strategy.</p>
             )}
           </Card>
 
           <Card className="p-6 mt-4">
-            <h3 className="text-xl font-bold mb-4">How to Play</h3>
+            <h3 className="text-xl font-bold mb-4">Learn Real Defense</h3>
             <div className="space-y-3 text-sm">
-              <p>🎯 Watch as the ball gets hit to different areas of the field</p>
-              <p>👥 See how players move to their defensive positions</p>
-              <p>🏃 Observe how runners advance on different types of hits</p>
-              <p>📚 Learn who fields, backs up, and covers bases</p>
-              <p>🔄 Try different scenarios by clicking "Hit the Ball!" again</p>
+              <p>🎯 Scenarios based on actual defensive situations</p>
+              <p>✂️ See proper cut-off positioning and responsibilities</p>
+              <p>🛡️ Learn who covers bases vs. who backs up</p>
+              <p>🏃 Watch realistic runner advancement</p>
+              <p>📖 Includes special plays like sacrifice bunts and wheel plays</p>
+              <p>🔄 Each scenario teaches specific defensive concepts</p>
             </div>
           </Card>
         </div>
