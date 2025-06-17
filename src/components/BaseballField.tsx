@@ -287,19 +287,29 @@ const BaseballField = () => {
             {showUnicorn && <CelebrationUnicorn />}
           </Card>
 
+          {/* Game Controls below the field */}
+          {!awaitingDecision && (
+            <GameControls
+              onStartScenario={startScenario}
+              onNextBatter={nextBatter}
+              onReset={resetField}
+              isAnimating={isAnimating}
+              playComplete={playComplete}
+            />
+          )}
+
           <LevelInfo />
         </div>
 
         <div className="w-80">
-          {/* Game Controls moved here */}
+          {/* Level selector moved here */}
           <Card className="p-6 border-4 border-gray-600 bg-gray-100 mb-4" style={{ imageRendering: 'pixelated' }}>
-            <h3 className="text-xl font-bold mb-4 font-mono">GAME CONTROLS</h3>
+            <h3 className="text-xl font-bold mb-4 font-mono">LEAGUE LEVEL</h3>
             
-            {/* Level selector */}
             <div className="mb-4 flex flex-col gap-2">
               <label className="text-sm font-bold font-mono text-gray-700" style={{
                 fontFamily: 'monospace'
-              }}>LEAGUE LEVEL:</label>
+              }}>SELECT YOUR LEVEL:</label>
               <Select value={level} onValueChange={(value: BaseballLevel) => setLevel(value)}>
                 <SelectTrigger className="w-full font-mono border-4 border-stone-600 bg-stone-200" style={{
                   fontFamily: 'monospace',
@@ -317,16 +327,6 @@ const BaseballField = () => {
                 </SelectContent>
               </Select>
             </div>
-
-            {!awaitingDecision && (
-              <GameControls
-                onStartScenario={startScenario}
-                onNextBatter={nextBatter}
-                onReset={resetField}
-                isAnimating={isAnimating}
-                playComplete={playComplete}
-              />
-            )}
           </Card>
 
           {!playComplete ? (
