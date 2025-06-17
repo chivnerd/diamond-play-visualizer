@@ -53,7 +53,7 @@ const PlayInfo: React.FC<PlayInfoProps> = ({ scenario, level, ball, playerDecisi
       <h3 className="text-xl font-bold mb-4 font-mono text-yellow-200" style={{
         textShadow: '2px 2px 0px #8B4513',
         fontFamily: 'monospace'
-      }}>CURRENT PLAY</h3>
+      }}>{scenario}</h3>
       <div className="space-y-4">
         {playerDecisionCorrect !== null && (
           <div className={`p-3 border-4 ${playerDecisionCorrect ? 'border-green-600' : 'border-red-600'}`} style={{
@@ -127,8 +127,7 @@ const PlayInfo: React.FC<PlayInfoProps> = ({ scenario, level, ball, playerDecisi
           background: 'linear-gradient(145deg, #5DADE2 0%, #3498DB 50%, #5DADE2 100%)',
           imageRendering: 'pixelated'
         }}>
-          <h4 className="font-semibold text-blue-900 font-mono" style={{ fontFamily: 'monospace' }}>{scenario}</h4>
-          <p className="text-sm text-blue-900 font-mono mt-1" style={{ fontFamily: 'monospace' }}>Level: {level.toUpperCase().replace('-', ' ')}</p>
+          <p className="text-sm text-blue-900 font-mono" style={{ fontFamily: 'monospace' }}>Level: {level.toUpperCase().replace('-', ' ')}</p>
         </div>
       </div>
     </Card>
