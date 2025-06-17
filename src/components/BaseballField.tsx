@@ -162,6 +162,11 @@ const BaseballField = () => {
       setCelebrationVariant(variant);
       setShowUnicorn(true);
       setTimeout(() => setShowUnicorn(false), 6000);
+    } else {
+      // Show losing unicorn for incorrect decisions
+      setCelebrationVariant('losing');
+      setShowUnicorn(true);
+      setTimeout(() => setShowUnicorn(false), 6000);
     }
 
     // Show feedback popup for ALL decisions (correct and incorrect)
