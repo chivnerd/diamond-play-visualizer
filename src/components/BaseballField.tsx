@@ -551,11 +551,11 @@ const BaseballField = () => {
 
   const getPlayerColor = (role: string) => {
     switch (role) {
-      case 'fielder': return 'bg-blue-500';
+      case 'fielder': return 'bg-blue-600';
       case 'backup': return 'bg-yellow-500';
-      case 'cover': return 'bg-green-500';
-      case 'cutoff': return 'bg-purple-500';
-      default: return 'bg-gray-400';
+      case 'cover': return 'bg-green-600';
+      case 'cutoff': return 'bg-purple-600';
+      default: return 'bg-gray-500';
     }
   };
 
@@ -572,47 +572,158 @@ const BaseballField = () => {
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
       <div className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-green-800 mb-2">⚾ Baseball Defense Trainer</h1>
-        <p className="text-lg text-gray-600">Learn accurate defensive positioning from real baseball situations!</p>
+        <h1 className="text-4xl font-bold text-green-800 mb-2 font-mono pixelated">⚾ RBI BASEBALL DEFENSE TRAINER</h1>
+        <p className="text-lg text-gray-700 font-mono">Learn accurate defensive positioning from real baseball situations!</p>
       </div>
 
       <div className="flex gap-6">
         <div className="flex-1">
-          <Card className="p-6 bg-green-50">
-            <div className="relative bg-green-600 rounded-lg overflow-hidden" style={{ width: '500px', height: '400px', margin: '0 auto' }}>
-              {/* Baseball field elements */}
-              <div className="absolute inset-0">
-                {/* Pitcher's mound */}
-                <div className="absolute w-8 h-8 bg-yellow-600 rounded-full" style={{ left: '242px', top: '272px' }}></div>
-                
-                {/* Home plate */}
-                <div className="absolute w-4 h-4 bg-white rounded-sm rotate-45" style={{ left: '242px', top: '342px' }}></div>
-                
-                {/* Bases */}
-                <div className="absolute w-4 h-4 bg-white rounded-sm rotate-45" style={{ left: '312px', top: '272px' }}></div>
-                <div className="absolute w-4 h-4 bg-white rounded-sm rotate-45" style={{ left: '242px', top: '202px' }}></div>
-                <div className="absolute w-4 h-4 bg-white rounded-sm rotate-45" style={{ left: '172px', top: '272px' }}></div>
-                
-                {/* Infield dirt */}
-                <div className="absolute bg-yellow-700 opacity-30 rounded-full" style={{ 
-                  width: '280px', 
-                  height: '280px', 
-                  left: '110px', 
-                  top: '120px' 
-                }}></div>
-              </div>
+          <Card className="p-6 bg-green-100 border-4 border-green-800" style={{ imageRendering: 'pixelated' }}>
+            {/* Nintendo RBI Baseball style field */}
+            <div 
+              className="relative rounded-lg overflow-hidden border-4 border-gray-800 shadow-2xl" 
+              style={{ 
+                width: '500px', 
+                height: '400px', 
+                margin: '0 auto',
+                background: 'linear-gradient(180deg, #228B22 0%, #32CD32 40%, #8B4513 40%, #D2691E 60%, #32CD32 60%, #228B22 100%)',
+                imageRendering: 'pixelated'
+              }}
+            >
+              {/* Outfield grass (darker green) */}
+              <div 
+                className="absolute" 
+                style={{
+                  width: '480px',
+                  height: '180px',
+                  left: '10px',
+                  top: '10px',
+                  background: '#228B22',
+                  borderRadius: '0 0 240px 240px'
+                }}
+              ></div>
 
-              {/* Players */}
+              {/* Infield dirt (brown/tan) */}
+              <div 
+                className="absolute" 
+                style={{
+                  width: '300px',
+                  height: '300px',
+                  left: '100px',
+                  top: '100px',
+                  background: '#D2691E',
+                  borderRadius: '50%',
+                  opacity: 0.8
+                }}
+              ></div>
+
+              {/* Pitcher's mound (tan/brown mound) */}
+              <div 
+                className="absolute border-2 border-gray-700" 
+                style={{ 
+                  left: '240px', 
+                  top: '270px',
+                  width: '20px',
+                  height: '20px',
+                  background: '#CD853F',
+                  borderRadius: '50%',
+                  boxShadow: 'inset 2px 2px 4px rgba(0,0,0,0.3)'
+                }}
+              ></div>
+                
+              {/* Home plate (white pentagon shape) */}
+              <div 
+                className="absolute border-2 border-gray-700" 
+                style={{ 
+                  left: '245px', 
+                  top: '345px',
+                  width: '10px',
+                  height: '10px',
+                  background: '#FFFFFF',
+                  clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
+                  boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                }}
+              ></div>
+                
+              {/* First base (white square) */}
+              <div 
+                className="absolute border-2 border-gray-700" 
+                style={{ 
+                  left: '315px', 
+                  top: '275px',
+                  width: '10px',
+                  height: '10px',
+                  background: '#FFFFFF',
+                  boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                }}
+              ></div>
+
+              {/* Second base (white square) */}
+              <div 
+                className="absolute border-2 border-gray-700" 
+                style={{ 
+                  left: '245px', 
+                  top: '205px',
+                  width: '10px',
+                  height: '10px',
+                  background: '#FFFFFF',
+                  transform: 'rotate(45deg)',
+                  boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                }}
+              ></div>
+
+              {/* Third base (white square) */}
+              <div 
+                className="absolute border-2 border-gray-700" 
+                style={{ 
+                  left: '175px', 
+                  top: '275px',
+                  width: '10px',
+                  height: '10px',
+                  background: '#FFFFFF',
+                  boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                }}
+              ></div>
+
+              {/* Foul lines */}
+              <div 
+                className="absolute bg-white" 
+                style={{
+                  width: '2px',
+                  height: '200px',
+                  left: '249px',
+                  top: '200px',
+                  transformOrigin: 'bottom',
+                  transform: 'rotate(45deg)'
+                }}
+              ></div>
+              <div 
+                className="absolute bg-white" 
+                style={{
+                  width: '2px',
+                  height: '200px',
+                  left: '249px',
+                  top: '200px',
+                  transformOrigin: 'bottom',
+                  transform: 'rotate(-45deg)'
+                }}
+              ></div>
+
+              {/* Players with retro RBI Baseball styling */}
               {players.map((player) => (
                 <div
                   key={player.id}
-                  className={`absolute w-8 h-8 rounded-full ${getPlayerColor(player.role)} border-2 border-white shadow-lg transition-all duration-1000 ease-out flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:scale-110 ${
+                  className={`absolute rounded-full border-2 border-black shadow-lg transition-all duration-1000 ease-out flex items-center justify-center text-white text-xs font-bold cursor-pointer hover:scale-110 font-mono ${getPlayerColor(player.role)} ${
                     player.isActive ? 'animate-pulse' : ''
                   }`}
                   style={{
                     left: `${player.x - 16}px`,
                     top: `${player.y - 16}px`,
+                    width: '32px',
+                    height: '32px',
                     transform: player.isActive ? 'scale(1.2)' : 'scale(1)',
+                    imageRendering: 'pixelated',
+                    boxShadow: player.isActive ? '0 0 15px rgba(255,255,0,0.8)' : '2px 2px 4px rgba(0,0,0,0.4)'
                   }}
                   title={`${player.position} - ${getRoleDescription(player.role)}`}
                 >
@@ -620,35 +731,52 @@ const BaseballField = () => {
                 </div>
               ))}
 
-              {/* Runners */}
+              {/* Runners with retro styling */}
               {runners.map((runner) => (
                 <div
                   key={runner.id}
-                  className={`absolute w-6 h-6 rounded-full bg-red-500 border-2 border-white shadow-lg transition-all duration-2000 ease-out flex items-center justify-center text-white text-xs font-bold ${
+                  className={`absolute rounded-full border-2 border-black shadow-lg transition-all duration-2000 ease-out flex items-center justify-center text-white text-xs font-bold font-mono ${
                     runner.isRunning ? 'animate-bounce' : ''
                   }`}
                   style={{
-                    left: `${runner.isRunning ? runner.targetX - 12 : runner.x - 12}px`,
-                    top: `${runner.isRunning ? runner.targetY - 12 : runner.y - 12}px`,
+                    left: `${runner.isRunning ? runner.targetX - 14 : runner.x - 14}px`,
+                    top: `${runner.isRunning ? runner.targetY - 14 : runner.y - 14}px`,
+                    width: '28px',
+                    height: '28px',
+                    background: '#FF4500',
+                    imageRendering: 'pixelated',
+                    boxShadow: '2px 2px 4px rgba(0,0,0,0.4)'
                   }}
                   title="Base Runner"
                 >
-                  🏃
+                  R
                 </div>
               ))}
 
-              {/* Ball */}
+              {/* Ball with retro white/red stitching look */}
               <div
-                className={`absolute w-4 h-4 bg-white rounded-full border-2 border-red-500 shadow-lg transition-all duration-1000 ease-out ${
+                className={`absolute rounded-full border-2 border-red-600 shadow-lg transition-all duration-1000 ease-out ${
                   ball.isMoving ? 'animate-bounce' : ''
-                } ${ball.isThrown ? 'bg-orange-400' : ''}`}
+                } ${ball.isThrown ? 'bg-orange-600' : ''}`}
                 style={{
                   left: `${ball.isMoving ? ball.targetX - 8 : ball.x - 8}px`,
                   top: `${ball.isMoving ? ball.targetY - 8 : ball.y - 8}px`,
+                  width: '16px',
+                  height: '16px',
+                  background: ball.isThrown ? 'radial-gradient(circle, #FFA500 30%, #FF6347 70%)' : 'radial-gradient(circle, #FFFFFF 30%, #F0F0F0 70%)',
+                  imageRendering: 'pixelated',
+                  boxShadow: ball.isMoving ? '0 0 10px rgba(255,255,0,0.8)' : '2px 2px 4px rgba(0,0,0,0.4)'
                 }}
                 title={ball.isThrown ? `Thrown to ${ball.throwTarget}` : 'Baseball'}
               >
-                ⚾
+              </div>
+
+              {/* Retro scoreboard-style overlay */}
+              <div 
+                className="absolute top-2 left-2 bg-black text-green-400 px-2 py-1 font-mono text-xs border border-green-400"
+                style={{ imageRendering: 'pixelated' }}
+              >
+                RBI BASEBALL
               </div>
             </div>
 
@@ -656,29 +784,32 @@ const BaseballField = () => {
               <Button 
                 onClick={startScenario} 
                 disabled={isAnimating || playComplete}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg font-mono border-2 border-blue-800"
+                style={{ imageRendering: 'pixelated' }}
               >
                 <Play className="w-5 h-5 mr-2" />
-                {isAnimating ? 'Watch the Play!' : 'Hit the Ball!'}
+                {isAnimating ? 'WATCH THE PLAY!' : 'HIT THE BALL!'}
               </Button>
               
               {playComplete && (
                 <Button 
                   onClick={nextBatter} 
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-lg"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-lg font-mono border-2 border-green-800"
+                  style={{ imageRendering: 'pixelated' }}
                 >
                   <ArrowRight className="w-5 h-5 mr-2" />
-                  Next Batter
+                  NEXT BATTER
                 </Button>
               )}
               
               <Button 
                 onClick={resetField} 
                 variant="outline"
-                className="px-6 py-3 text-lg"
+                className="px-6 py-3 text-lg font-mono border-2 border-gray-600"
+                style={{ imageRendering: 'pixelated' }}
               >
                 <RotateCcw className="w-5 h-5 mr-2" />
-                Reset
+                RESET
               </Button>
             </div>
           </Card>
@@ -686,63 +817,63 @@ const BaseballField = () => {
 
         <div className="w-80">
           {!playComplete ? (
-            <Card className="p-6">
-              <h3 className="text-xl font-bold mb-4">Current Play</h3>
+            <Card className="p-6 border-4 border-gray-600 bg-gray-100" style={{ imageRendering: 'pixelated' }}>
+              <h3 className="text-xl font-bold mb-4 font-mono">CURRENT PLAY</h3>
               {scenario ? (
                 <div className="space-y-4">
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <h4 className="font-semibold text-blue-800">{scenario}</h4>
+                  <div className="p-3 bg-blue-200 rounded border-2 border-blue-600">
+                    <h4 className="font-semibold text-blue-800 font-mono">{scenario}</h4>
                   </div>
                   
                   {ball.isThrown && ball.throwTarget && (
-                    <div className="p-3 bg-orange-50 rounded-lg">
-                      <h5 className="font-semibold text-orange-800">
-                        🎯 Ball thrown to: {ball.throwTarget === 'home' ? 'Home Plate' : `${ball.throwTarget} Base`}
+                    <div className="p-3 bg-orange-200 rounded border-2 border-orange-600">
+                      <h5 className="font-semibold text-orange-800 font-mono">
+                        🎯 BALL THROWN TO: {ball.throwTarget === 'home' ? 'HOME PLATE' : `${ball.throwTarget} BASE`}
                       </h5>
                     </div>
                   )}
                   
                   <div className="space-y-2">
-                    <h5 className="font-semibold">Player Roles:</h5>
-                    <div className="space-y-1 text-sm">
+                    <h5 className="font-semibold font-mono">PLAYER ROLES:</h5>
+                    <div className="space-y-1 text-sm font-mono">
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                        <span>Fields the ball</span>
+                        <div className="w-4 h-4 bg-blue-600 rounded border border-black"></div>
+                        <span>FIELDS THE BALL</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-                        <span>Cut-off man</span>
+                        <div className="w-4 h-4 bg-purple-600 rounded border border-black"></div>
+                        <span>CUT-OFF MAN</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
-                        <span>Backs up the play</span>
+                        <div className="w-4 h-4 bg-yellow-500 rounded border border-black"></div>
+                        <span>BACKS UP THE PLAY</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                        <span>Covers the base</span>
+                        <div className="w-4 h-4 bg-green-600 rounded border border-black"></div>
+                        <span>COVERS THE BASE</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-                        <span>🏃 Base runner</span>
+                        <div className="w-4 h-4 bg-orange-600 rounded border border-black"></div>
+                        <span>BASE RUNNER</span>
                       </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-600">Click "Hit the Ball!" to see accurate defensive scenarios based on real baseball strategy.</p>
+                <p className="text-gray-700 font-mono">CLICK "HIT THE BALL!" TO SEE ACCURATE DEFENSIVE SCENARIOS BASED ON REAL BASEBALL STRATEGY.</p>
               )}
             </Card>
           ) : (
-            <Card className="p-6 max-h-96 overflow-y-auto">
-              <h3 className="text-xl font-bold mb-4">Play Analysis</h3>
-              <div className="prose prose-sm">
+            <Card className="p-6 max-h-96 overflow-y-auto border-4 border-gray-600 bg-gray-100" style={{ imageRendering: 'pixelated' }}>
+              <h3 className="text-xl font-bold mb-4 font-mono">PLAY ANALYSIS</h3>
+              <div className="prose prose-sm font-mono">
                 {playExplanation.split('\n').map((line, index) => {
                   if (line.startsWith('**') && line.endsWith('**')) {
-                    return <h4 key={index} className="font-bold text-blue-800 mt-4 mb-2">{line.slice(2, -2)}</h4>;
+                    return <h4 key={index} className="font-bold text-blue-800 mt-4 mb-2 font-mono">{line.slice(2, -2)}</h4>;
                   } else if (line.startsWith('•')) {
-                    return <li key={index} className="ml-4 mb-1">{line.slice(2)}</li>;
+                    return <li key={index} className="ml-4 mb-1 font-mono">{line.slice(2)}</li>;
                   } else if (line.trim()) {
-                    return <p key={index} className="mb-2">{line}</p>;
+                    return <p key={index} className="mb-2 font-mono">{line}</p>;
                   }
                   return <br key={index} />;
                 })}
@@ -750,16 +881,16 @@ const BaseballField = () => {
             </Card>
           )}
 
-          <Card className="p-6 mt-4">
-            <h3 className="text-xl font-bold mb-4">Learn Real Defense</h3>
-            <div className="space-y-3 text-sm">
-              <p>🎯 Scenarios based on actual defensive situations</p>
-              <p>✂️ See proper cut-off positioning and responsibilities</p>
-              <p>🛡️ Learn who covers bases vs. who backs up</p>
-              <p>🏃 Watch realistic runner advancement</p>
-              <p>⚾ Ball thrown to the correct base automatically</p>
-              <p>📖 Detailed explanations after each play</p>
-              <p>🎓 Learn the "why" behind each defensive decision</p>
+          <Card className="p-6 mt-4 border-4 border-gray-600 bg-gray-100" style={{ imageRendering: 'pixelated' }}>
+            <h3 className="text-xl font-bold mb-4 font-mono">LEARN REAL DEFENSE</h3>
+            <div className="space-y-3 text-sm font-mono">
+              <p>🎯 SCENARIOS BASED ON ACTUAL DEFENSIVE SITUATIONS</p>
+              <p>✂️ SEE PROPER CUT-OFF POSITIONING AND RESPONSIBILITIES</p>
+              <p>🛡️ LEARN WHO COVERS BASES VS. WHO BACKS UP</p>
+              <p>🏃 WATCH REALISTIC RUNNER ADVANCEMENT</p>
+              <p>⚾ BALL THROWN TO THE CORRECT BASE AUTOMATICALLY</p>
+              <p>📖 DETAILED EXPLANATIONS AFTER EACH PLAY</p>
+              <p>🎓 LEARN THE "WHY" BEHIND EACH DEFENSIVE DECISION</p>
             </div>
           </Card>
         </div>
