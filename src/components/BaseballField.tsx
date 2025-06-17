@@ -572,14 +572,14 @@ const BaseballField = () => {
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
       <div className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-green-800 mb-2 font-mono pixelated">⚾ RBI BASEBALL DEFENSE TRAINER</h1>
+        <h1 className="text-4xl font-bold text-green-800 mb-2 font-mono pixelated">⚾ BASEBALL DEFENSE TRAINER</h1>
         <p className="text-lg text-gray-700 font-mono">Learn accurate defensive positioning from real baseball situations!</p>
       </div>
 
       <div className="flex gap-6">
         <div className="flex-1">
           <Card className="p-6 bg-green-100 border-4 border-green-800" style={{ imageRendering: 'pixelated' }}>
-            {/* Nintendo RBI Baseball style field */}
+            {/* Nintendo style field */}
             <div 
               className="relative rounded-lg overflow-hidden border-4 border-gray-800 shadow-2xl" 
               style={{ 
@@ -776,7 +776,7 @@ const BaseballField = () => {
                 className="absolute top-2 left-2 bg-black text-green-400 px-2 py-1 font-mono text-xs border border-green-400"
                 style={{ imageRendering: 'pixelated' }}
               >
-                RBI BASEBALL
+                DEFENSE TRAINER
               </div>
             </div>
 
