@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -181,23 +182,45 @@ const BaseballField = () => {
   }, [ball.isMoving]);
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
+    <div className="w-full max-w-6xl mx-auto p-6" style={{ 
+      background: 'linear-gradient(180deg, #87CEEB 0%, #98D982 40%, #8B4513 100%)',
+      minHeight: '100vh',
+      imageRendering: 'pixelated'
+    }}>
       <div className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-green-800 mb-2 font-mono pixelated">⚾ BIGMACS DEFENSE RIZZ SCHOOL</h1>
-        <p className="text-lg text-gray-700 font-mono">This is gonna be EPIC! Let's crush some baseball plays!</p>
+        <h1 className="text-4xl font-bold text-green-800 mb-2 font-mono pixelated" style={{
+          textShadow: '3px 3px 0px #2D5016, 6px 6px 0px rgba(0,0,0,0.3)',
+          fontFamily: 'monospace',
+          letterSpacing: '2px'
+        }}>⚾ BIGMACS DEFENSE RIZZ SCHOOL</h1>
+        <p className="text-lg text-gray-700 font-mono" style={{
+          textShadow: '2px 2px 0px #FFFFFF, 4px 4px 0px rgba(0,0,0,0.2)',
+          fontFamily: 'monospace',
+          letterSpacing: '1px'
+        }}>Avoid the crash out and GET CHICKENS!</p>
       </div>
 
       <div className="flex gap-6">
         <div className="flex-1">
-          <Card className="p-6 bg-green-100 border-4 border-green-800" style={{ imageRendering: 'pixelated' }}>
+          <Card className="p-6 border-4 border-stone-800 shadow-2xl" style={{ 
+            background: 'linear-gradient(145deg, #8B7355 0%, #A0522D 50%, #8B7355 100%)',
+            imageRendering: 'pixelated',
+            boxShadow: '8px 8px 0px #4A4A4A, 12px 12px 0px rgba(0,0,0,0.3)'
+          }}>
             {/* Level selector */}
             <div className="mb-4 flex items-center justify-center gap-4">
-              <label className="text-lg font-bold font-mono text-green-800">LEAGUE LEVEL:</label>
+              <label className="text-lg font-bold font-mono text-yellow-200" style={{
+                textShadow: '2px 2px 0px #8B4513',
+                fontFamily: 'monospace'
+              }}>LEAGUE LEVEL:</label>
               <Select value={level} onValueChange={(value: BaseballLevel) => setLevel(value)}>
-                <SelectTrigger className="w-48 font-mono border-2 border-green-600">
+                <SelectTrigger className="w-48 font-mono border-4 border-stone-600 bg-stone-200" style={{
+                  fontFamily: 'monospace',
+                  imageRendering: 'pixelated'
+                }}>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="font-mono bg-stone-200 border-4 border-stone-600">
                   <SelectItem value="tball">T-Ball</SelectItem>
                   <SelectItem value="coach-pitch">Coach Pitch</SelectItem>
                   <SelectItem value="minors">Minors</SelectItem>
