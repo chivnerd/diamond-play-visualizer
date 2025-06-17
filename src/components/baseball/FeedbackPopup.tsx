@@ -1,14 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { GameScenario, BaseballLevel } from '../../types/baseball';
 import { isDoublePlay } from '../../utils/gameLogic';
 import { RizzMode, getButtonText } from '../../utils/rizzModeContent';
-import { audioManager, getRizzModeMusic } from '../../utils/audioUtils';
 import RizzModeSelector from './RizzModeSelector';
 import FeedbackContent from './FeedbackContent';
-import MusicControls from './MusicControls';
 
 interface FeedbackPopupProps {
   isOpen: boolean;
@@ -28,46 +26,6 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
   level 
 }) => {
   const [rizzMode, setRizzMode] = useState<RizzMode>('youtuber');
-  const [isMuted, setIsMuted] = useState(false);
-
-  // Play music when popup opens or rizz mode changes
-  useEffect(() => {
-    if (isOpen) {
-      const musicSrc = getRizzModeMusic(rizzMode);
-      audioManager.play(musicSrc);
-    } else {
-      audioManager.stop();
-    }
-
-    return () => {
-      if (!isOpen) {
-        audioManager.stop();
-      }
-    };
-  }, [isOpen, rizzMode]);
-
-  // Handle mute toggle
-  const handleToggleMute = () => {
-    const newMutedState = !isMuted;
-    setIsMuted(newMutedState);
-    audioManager.setMuted(newMutedState);
-    
-    if (!newMutedState && isOpen) {
-      const musicSrc = getRizzModeMusic(rizzMode);
-      audioManager.play(musicSrc);
-    }
-  };
-
-  // Handle rizz mode change
-  const handleRizzModeChange = (mode: RizzMode) => {
-    setRizzMode(mode);
-  };
-
-  // Handle popup close
-  const handleClose = () => {
-    audioManager.stop();
-    onClose();
-  };
 
   if (!scenario || !correctChoice) return null;
 
@@ -97,7 +55,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
   const isDouble = isDoublePlay(playerChoice, scenario);
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`max-w-md border-4 ${isCorrect ? 'border-green-600' : 'border-red-600'}`} style={{
         background: isCorrect 
           ? 'linear-gradient(145deg, #D4F4DD 0%, #A8E6B8 50%, #D4F4DD 100%)'
@@ -117,12 +75,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
         </DialogHeader>
         
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
-              <RizzModeSelector rizzMode={rizzMode} onRizzModeChange={handleRizzModeChange} />
-            </div>
-            <MusicControls isMuted={isMuted} onToggleMute={handleToggleMute} />
-          </div>
+          <RizzModeSelector rizzMode={rizzMode} onRizzModeChange={setRizzMode} />
 
           <FeedbackContent
             scenario={scenario}
@@ -135,7 +88,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
           />
 
           <Button
-            onClick={handleClose}
+            onClick={onClose}
             className="w-full p-3 text-lg font-mono border-4 border-green-600 text-white font-bold"
             style={{
               background: 'linear-gradient(145deg, #4CAF50 0%, #388E3C 50%, #4CAF50 100%)',
