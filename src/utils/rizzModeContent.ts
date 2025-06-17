@@ -1,4 +1,3 @@
-
 export type RizzMode = 'youtuber' | 'shakespeare' | 'spanish' | 'liljon';
 
 export const getRizzModeLabel = (mode: RizzMode): string => {
@@ -8,6 +7,29 @@ export const getRizzModeLabel = (mode: RizzMode): string => {
     case 'spanish': return '🌶️ Spanish';
     case 'liljon': return '🎵 Lil Jon';
   }
+};
+
+export const getButtonText = (rizzMode: RizzMode, isCorrect: boolean): string => {
+  const buttonTexts = {
+    youtuber: {
+      correct: 'LETS GOOO! NEXT BATTER',
+      incorrect: 'BET! RUN IT BACK'
+    },
+    shakespeare: {
+      correct: 'Huzzah! To the next challenger!',
+      incorrect: 'Fear not! Another chance awaits!'
+    },
+    spanish: {
+      correct: '¡VÁMONOS! ¡SIGUIENTE BATEADOR!',
+      incorrect: '¡DALE! ¡OTRA VEZ!'
+    },
+    liljon: {
+      correct: 'YEAHHH! NEXT UP! OKAYYYY!',
+      incorrect: 'WHAT?! TRY AGAIN! YEAHHH!'
+    }
+  };
+
+  return isCorrect ? buttonTexts[rizzMode].correct : buttonTexts[rizzMode].incorrect;
 };
 
 export const getCorrectExplanations = (rizzMode: RizzMode, playerChoice: string, scenario: any): string => {

@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { GameScenario, BaseballLevel } from '../../types/baseball';
 import { isDoublePlay } from '../../utils/gameLogic';
-import { RizzMode } from '../../utils/rizzModeContent';
+import { RizzMode, getButtonText } from '../../utils/rizzModeContent';
 import RizzModeSelector from './RizzModeSelector';
 import FeedbackContent from './FeedbackContent';
 
@@ -97,7 +97,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
               fontFamily: 'monospace'
             }}
           >
-            {isCorrect ? 'LETS GOOO! NEXT BATTER' : 'BET! RUN IT BACK'}
+            {getButtonText(rizzMode, isCorrect)}
           </Button>
         </div>
       </DialogContent>
