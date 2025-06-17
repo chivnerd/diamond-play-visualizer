@@ -62,32 +62,36 @@ const BaseballFieldVisual: React.FC<BaseballFieldVisualProps> = ({ players, runn
         }}
       ></div>
         
-      {/* Home plate (white pentagon shape) */}
+      {/* Home plate (white pentagon shape with H icon) */}
       <div 
-        className="absolute border-2 border-gray-700" 
+        className="absolute border-2 border-gray-700 flex items-center justify-center" 
         style={{ 
-          left: '245px', 
-          top: '345px',
-          width: '10px',
-          height: '10px',
+          left: '240px', 
+          top: '340px',
+          width: '20px',
+          height: '20px',
           background: '#FFFFFF',
           clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
           boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
         }}
-      ></div>
+      >
+        <span className="text-black text-xs font-bold font-mono" style={{ transform: 'scale(0.7)' }}>H</span>
+      </div>
         
-      {/* First base (white square) */}
+      {/* First base (white square with 1 icon) */}
       <div 
-        className="absolute border-2 border-gray-700" 
+        className="absolute border-2 border-gray-700 flex items-center justify-center" 
         style={{ 
-          left: '315px', 
-          top: '275px',
-          width: '10px',
-          height: '10px',
+          left: '310px', 
+          top: '270px',
+          width: '20px',
+          height: '20px',
           background: '#FFFFFF',
           boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
         }}
-      ></div>
+      >
+        <span className="text-black text-xs font-bold font-mono">1</span>
+      </div>
 
       {/* Second base (white square) */}
       <div 
@@ -103,18 +107,20 @@ const BaseballFieldVisual: React.FC<BaseballFieldVisualProps> = ({ players, runn
         }}
       ></div>
 
-      {/* Third base (white square) */}
+      {/* Third base (white square with 3 icon) */}
       <div 
-        className="absolute border-2 border-gray-700" 
+        className="absolute border-2 border-gray-700 flex items-center justify-center" 
         style={{ 
-          left: '175px', 
-          top: '275px',
-          width: '10px',
-          height: '10px',
+          left: '170px', 
+          top: '270px',
+          width: '20px',
+          height: '20px',
           background: '#FFFFFF',
           boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
         }}
-      ></div>
+      >
+        <span className="text-black text-xs font-bold font-mono">3</span>
+      </div>
 
       {/* Foul lines */}
       <div 
