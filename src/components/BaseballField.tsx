@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Play, RotateCcw } from 'lucide-react';
+import { Play, RotateCcw, ArrowRight } from 'lucide-react';
 
 interface Player {
   id: string;
@@ -60,12 +60,118 @@ const BaseballField = () => {
   const [scenario, setScenario] = useState<string>('');
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentScenario, setCurrentScenario] = useState<any>(null);
+  const [playComplete, setPlayComplete] = useState(false);
+  const [playExplanation, setPlayExplanation] = useState<string>('');
 
   const basePositions = {
     home: { x: 250, y: 350 },
     '1st': { x: 320, y: 280 },
     '2nd': { x: 250, y: 210 },
     '3rd': { x: 180, y: 280 }
+  };
+
+  // Function to get detailed play explanation
+  const getPlayExplanation = (scenarioData: any, throwTarget: string | null) => {
+    const scenarioName = scenarioData.name.toLowerCase();
+    const runnersOnBase = scenarioData.baseRunners;
+    
+    let explanation = `**${scenarioData.name}**\n\n`;
+    
+    // Explain the initial situation
+    if (runnersOnBase.length === 0) {
+      explanation += "**Situation:** No runners on base - focus on preventing the batter from advancing.\n\n";
+    } else {
+      explanation += `**Situation:** Runner(s) on ${runnersOnBase.join(' and ')} base - prevent advancing runners from scoring.\n\n`;
+    }
+
+    // Explain key player responsibilities
+    if (scenarioName.includes('single to left')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Left fielder fields the ball cleanly\n";
+      explanation += "• Shortstop positions as cut-off man between LF and target base\n";
+      explanation += "• Center fielder backs up the left fielder\n";
+      if (runnersOnBase.includes('2nd') || runnersOnBase.length >= 2) {
+        explanation += "• Third baseman becomes cut-off for home plate\n";
+        explanation += "• Pitcher backs up the catcher at home\n";
+      }
+    } else if (scenarioName.includes('single to center')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Center fielder has the best angle to the ball\n";
+      explanation += "• Both corner outfielders back up the center fielder\n";
+      if (runnersOnBase.includes('1st')) {
+        explanation += "• Shortstop becomes cut-off man for throw to third\n";
+      } else if (runnersOnBase.includes('2nd')) {
+        explanation += "• First baseman becomes cut-off man for throw to home\n";
+      }
+    } else if (scenarioName.includes('single to right')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Right fielder fields the ball\n";
+      explanation += "• Second baseman positions as cut-off man\n";
+      explanation += "• Center fielder backs up the right fielder\n";
+    } else if (scenarioName.includes('sacrifice bunt')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• All infielders charge to field the bunt\n";
+      explanation += "• Catcher directs the play and tells fielders where to throw\n";
+      explanation += "• Goal is to get the force out at the lead base\n";
+    } else if (scenarioName.includes('wheel play')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Shortstop breaks for third base as pitcher delivers\n";
+      explanation += "• This creates a force out opportunity at third base\n";
+      explanation += "• Very aggressive play - high risk, high reward\n";
+    } else if (scenarioName.includes('double')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Outfielder fields the ball in the gap\n";
+      explanation += "• Proper cut-off positioning is crucial for long throws\n";
+      explanation += "• Multiple players back up the play\n";
+    } else if (scenarioName.includes('pop fly')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Outfielder has priority on all fly balls\n";
+      explanation += "• Communication is key - outfielder calls off infielders\n";
+      explanation += "• Multiple players converge but yield to the outfielder\n";
+    }
+
+    // Explain the throw decision
+    if (throwTarget) {
+      explanation += `\n**Why throw to ${throwTarget === 'home' ? 'home plate' : throwTarget + ' base'}?**\n`;
+      
+      if (throwTarget === 'home') {
+        explanation += "• Runner from 2nd base can score on most singles\n";
+        explanation += "• Home plate is the most important base to protect\n";
+        explanation += "• Force the runner to make a good slide\n";
+      } else if (throwTarget === '3rd') {
+        explanation += "• Runner advancing to 3rd is in scoring position\n";
+        explanation += "• 3rd base puts runner 90 feet from home\n";
+        explanation += "• Prevent the runner from getting to scoring position\n";
+      } else if (throwTarget === '2nd') {
+        explanation += "• Keep the batter from advancing to scoring position\n";
+        explanation += "• 2nd base puts the batter in scoring position\n";
+        explanation += "• Show arm strength to deter future base running\n";
+      } else if (throwTarget === '1st') {
+        explanation += "• Get the sure out at first base\n";
+        explanation += "• Don't risk a throwing error on a long throw\n";
+        explanation += "• Take what the defense gives you\n";
+      }
+    } else {
+      explanation += "\n**No throw needed** - this is a catch for an out!\n";
+      explanation += "• Outfielder has priority and calls off all other fielders\n";
+      explanation += "• Clean catch results in an immediate out\n";
+    }
+
+    // Add tactical insight
+    explanation += "\n**Tactical Insight:**\n";
+    if (runnersOnBase.length === 0) {
+      explanation += "• With no pressure from runners, defense can be more aggressive\n";
+      explanation += "• Focus on preventing extra bases and showing arm strength\n";
+    } else if (runnersOnBase.length === 1) {
+      explanation += "• Balance between getting the force out and preventing advancement\n";
+      explanation += "• Communication between fielders is crucial\n";
+    } else {
+      explanation += "• Multiple runners create complex decisions\n";
+      explanation += "• Priority is usually preventing runs from scoring\n";
+      explanation += "• Cut-off man must be ready to redirect throw quickly\n";
+    }
+
+    return explanation;
   };
 
   // Function to determine the best base to throw to
@@ -303,6 +409,9 @@ const BaseballField = () => {
   const startScenario = () => {
     if (isAnimating) return;
     
+    setPlayComplete(false);
+    setPlayExplanation('');
+    
     // Pick a random scenario
     const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
     setCurrentScenario(randomScenario);
@@ -387,12 +496,19 @@ const BaseballField = () => {
           throwTarget
         }));
       }
-    }, 3000);
 
-    // Reset for next batter
-    setTimeout(() => {
-      resetField();
-    }, 5000);
+      // Generate detailed explanation after the throw
+      setTimeout(() => {
+        const explanation = getPlayExplanation(randomScenario, throwTarget);
+        setPlayExplanation(explanation);
+        setPlayComplete(true);
+        setIsAnimating(false);
+      }, 1000);
+    }, 3000);
+  };
+
+  const nextBatter = () => {
+    resetField();
   };
 
   const resetField = () => {
@@ -415,6 +531,8 @@ const BaseballField = () => {
     setScenario('');
     setCurrentScenario(null);
     setIsAnimating(false);
+    setPlayComplete(false);
+    setPlayExplanation('');
   };
 
   useEffect(() => {
@@ -537,12 +655,23 @@ const BaseballField = () => {
             <div className="flex justify-center gap-4 mt-6">
               <Button 
                 onClick={startScenario} 
-                disabled={isAnimating}
+                disabled={isAnimating || playComplete}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
               >
                 <Play className="w-5 h-5 mr-2" />
                 {isAnimating ? 'Watch the Play!' : 'Hit the Ball!'}
               </Button>
+              
+              {playComplete && (
+                <Button 
+                  onClick={nextBatter} 
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-lg"
+                >
+                  <ArrowRight className="w-5 h-5 mr-2" />
+                  Next Batter
+                </Button>
+              )}
+              
               <Button 
                 onClick={resetField} 
                 variant="outline"
@@ -556,52 +685,70 @@ const BaseballField = () => {
         </div>
 
         <div className="w-80">
-          <Card className="p-6">
-            <h3 className="text-xl font-bold mb-4">Current Play</h3>
-            {scenario ? (
-              <div className="space-y-4">
-                <div className="p-3 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-blue-800">{scenario}</h4>
-                </div>
-                
-                {ball.isThrown && ball.throwTarget && (
-                  <div className="p-3 bg-orange-50 rounded-lg">
-                    <h5 className="font-semibold text-orange-800">
-                      🎯 Ball thrown to: {ball.throwTarget === 'home' ? 'Home Plate' : `${ball.throwTarget} Base`}
-                    </h5>
+          {!playComplete ? (
+            <Card className="p-6">
+              <h3 className="text-xl font-bold mb-4">Current Play</h3>
+              {scenario ? (
+                <div className="space-y-4">
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <h4 className="font-semibold text-blue-800">{scenario}</h4>
                   </div>
-                )}
-                
-                <div className="space-y-2">
-                  <h5 className="font-semibold">Player Roles:</h5>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                      <span>Fields the ball</span>
+                  
+                  {ball.isThrown && ball.throwTarget && (
+                    <div className="p-3 bg-orange-50 rounded-lg">
+                      <h5 className="font-semibold text-orange-800">
+                        🎯 Ball thrown to: {ball.throwTarget === 'home' ? 'Home Plate' : `${ball.throwTarget} Base`}
+                      </h5>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-                      <span>Cut-off man</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
-                      <span>Backs up the play</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                      <span>Covers the base</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-                      <span>🏃 Base runner</span>
+                  )}
+                  
+                  <div className="space-y-2">
+                    <h5 className="font-semibold">Player Roles:</h5>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <span>Fields the ball</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
+                        <span>Cut-off man</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                        <span>Backs up the play</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <span>Covers the base</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                        <span>🏃 Base runner</span>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ) : (
+                <p className="text-gray-600">Click "Hit the Ball!" to see accurate defensive scenarios based on real baseball strategy.</p>
+              )}
+            </Card>
+          ) : (
+            <Card className="p-6 max-h-96 overflow-y-auto">
+              <h3 className="text-xl font-bold mb-4">Play Analysis</h3>
+              <div className="prose prose-sm">
+                {playExplanation.split('\n').map((line, index) => {
+                  if (line.startsWith('**') && line.endsWith('**')) {
+                    return <h4 key={index} className="font-bold text-blue-800 mt-4 mb-2">{line.slice(2, -2)}</h4>;
+                  } else if (line.startsWith('•')) {
+                    return <li key={index} className="ml-4 mb-1">{line.slice(2)}</li>;
+                  } else if (line.trim()) {
+                    return <p key={index} className="mb-2">{line}</p>;
+                  }
+                  return <br key={index} />;
+                })}
               </div>
-            ) : (
-              <p className="text-gray-600">Click "Hit the Ball!" to see accurate defensive scenarios based on real baseball strategy.</p>
-            )}
-          </Card>
+            </Card>
+          )}
 
           <Card className="p-6 mt-4">
             <h3 className="text-xl font-bold mb-4">Learn Real Defense</h3>
@@ -611,8 +758,8 @@ const BaseballField = () => {
               <p>🛡️ Learn who covers bases vs. who backs up</p>
               <p>🏃 Watch realistic runner advancement</p>
               <p>⚾ Ball thrown to the correct base automatically</p>
-              <p>🔄 Auto-reset for next batter after play completes</p>
-              <p>📖 Includes special plays like sacrifice bunts and wheel plays</p>
+              <p>📖 Detailed explanations after each play</p>
+              <p>🎓 Learn the "why" behind each defensive decision</p>
             </div>
           </Card>
         </div>
