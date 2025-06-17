@@ -45,6 +45,155 @@ const getInfieldScenarios = (): GameScenario[] => [
       { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
     ],
     runnerTargets: []
+  },
+  {
+    name: 'Ground ball to third base: runner on second',
+    ballTarget: { x: 180, y: 250 },
+    baseRunners: ['2nd'],
+    movements: [
+      { playerId: '3B', x: 180, y: 250, role: 'fielder' as const },
+      { playerId: 'SS', x: 200, y: 230, role: 'backup' as const },
+      { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+      { playerId: '2B', x: 280, y: 220, role: 'cover' as const },
+      { playerId: 'P', x: 230, y: 270, role: 'backup' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '2nd' as const, targetBase: '3rd' as const }
+    ]
+  },
+  {
+    name: 'Ground ball to pitcher: runners on first and second',
+    ballTarget: { x: 250, y: 280 },
+    baseRunners: ['1st', '2nd'],
+    movements: [
+      { playerId: 'P', x: 250, y: 280, role: 'fielder' as const },
+      { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+      { playerId: 'SS', x: 220, y: 210, role: 'cover' as const },
+      { playerId: '2B', x: 280, y: 220, role: 'cover' as const },
+      { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '1st' as const, targetBase: '2nd' as const },
+      { base: '2nd' as const, targetBase: '3rd' as const }
+    ]
+  },
+  {
+    name: 'Ground ball to first base: bases loaded',
+    ballTarget: { x: 330, y: 270 },
+    baseRunners: ['1st', '2nd', '3rd'],
+    movements: [
+      { playerId: '1B', x: 330, y: 270, role: 'fielder' as const },
+      { playerId: 'P', x: 280, y: 300, role: 'cover' as const },
+      { playerId: '2B', x: 280, y: 220, role: 'cover' as const },
+      { playerId: 'SS', x: 220, y: 210, role: 'cover' as const },
+      { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '1st' as const, targetBase: '2nd' as const },
+      { base: '2nd' as const, targetBase: '3rd' as const },
+      { base: '3rd' as const, targetBase: 'home' as const }
+    ]
+  },
+  {
+    name: 'Slow roller to shortstop: runner on third',
+    ballTarget: { x: 210, y: 240 },
+    baseRunners: ['3rd'],
+    movements: [
+      { playerId: 'SS', x: 210, y: 240, role: 'fielder' as const },
+      { playerId: '3B', x: 170, y: 270, role: 'backup' as const },
+      { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+      { playerId: '2B', x: 280, y: 220, role: 'cover' as const },
+      { playerId: 'P', x: 270, y: 260, role: 'backup' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '3rd' as const, targetBase: 'home' as const }
+    ]
+  },
+  {
+    name: 'Ground ball up the middle: runner on first',
+    ballTarget: { x: 250, y: 200 },
+    baseRunners: ['1st'],
+    movements: [
+      { playerId: 'SS', x: 240, y: 200, role: 'fielder' as const },
+      { playerId: '2B', x: 260, y: 200, role: 'backup' as const },
+      { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+      { playerId: 'P', x: 250, y: 250, role: 'backup' as const },
+      { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '1st' as const, targetBase: '2nd' as const }
+    ]
+  },
+  {
+    name: 'Bunt toward third base: runners on first and third',
+    ballTarget: { x: 190, y: 290 },
+    baseRunners: ['1st', '3rd'],
+    movements: [
+      { playerId: '3B', x: 190, y: 290, role: 'fielder' as const },
+      { playerId: 'P', x: 220, y: 300, role: 'backup' as const },
+      { playerId: 'SS', x: 200, y: 220, role: 'cover' as const },
+      { playerId: '2B', x: 280, y: 220, role: 'cover' as const },
+      { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '1st' as const, targetBase: '2nd' as const },
+      { base: '3rd' as const, targetBase: 'home' as const }
+    ]
+  },
+  {
+    name: 'High chopper to second base: runner on second',
+    ballTarget: { x: 290, y: 230 },
+    baseRunners: ['2nd'],
+    movements: [
+      { playerId: '2B', x: 290, y: 230, role: 'fielder' as const },
+      { playerId: 'SS', x: 250, y: 210, role: 'cover' as const },
+      { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+      { playerId: 'P', x: 270, y: 250, role: 'backup' as const },
+      { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '2nd' as const, targetBase: '3rd' as const }
+    ]
+  },
+  {
+    name: 'Ground ball to third: runners on first and second',
+    ballTarget: { x: 170, y: 260 },
+    baseRunners: ['1st', '2nd'],
+    movements: [
+      { playerId: '3B', x: 170, y: 260, role: 'fielder' as const },
+      { playerId: 'SS', x: 200, y: 220, role: 'cover' as const },
+      { playerId: '2B', x: 280, y: 220, role: 'cover' as const },
+      { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+      { playerId: 'P', x: 230, y: 270, role: 'backup' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '1st' as const, targetBase: '2nd' as const },
+      { base: '2nd' as const, targetBase: '3rd' as const }
+    ]
+  },
+  {
+    name: 'Weak ground ball to pitcher: runner on third',
+    ballTarget: { x: 260, y: 290 },
+    baseRunners: ['3rd'],
+    movements: [
+      { playerId: 'P', x: 260, y: 290, role: 'fielder' as const },
+      { playerId: '1B', x: 310, y: 290, role: 'cover' as const },
+      { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+      { playerId: 'SS', x: 220, y: 210, role: 'cover' as const },
+      { playerId: '2B', x: 280, y: 220, role: 'cover' as const },
+      { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+    ],
+    runnerTargets: [
+      { base: '3rd' as const, targetBase: 'home' as const }
+    ]
   }
 ];
 
