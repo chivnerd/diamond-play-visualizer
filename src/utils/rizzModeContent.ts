@@ -1,4 +1,4 @@
-export type RizzMode = 'youtuber' | 'shakespeare' | 'spanish' | 'liljon' | 'harrypotter' | 'english';
+export type RizzMode = 'youtuber' | 'shakespeare' | 'spanish' | 'liljon' | 'harrypotter' | 'english' | 'mcdonalds';
 
 export const getRizzModeLabel = (mode: RizzMode): string => {
   switch (mode) {
@@ -8,6 +8,7 @@ export const getRizzModeLabel = (mode: RizzMode): string => {
     case 'liljon': return '🎵 Lil Jon';
     case 'harrypotter': return '⚡ Harry Potter';
     case 'english': return '🇺🇸 Plain English';
+    case 'mcdonalds': return '🍟 McDonald\'s';
   }
 };
 
@@ -36,6 +37,10 @@ export const getButtonText = (rizzMode: RizzMode, isCorrect: boolean): string =>
     english: {
       correct: 'Great job! Next batter',
       incorrect: 'Try again!'
+    },
+    mcdonalds: {
+      correct: 'I\'m lovin\' it! Next order up!',
+      incorrect: 'Would you like to try again?'
     }
   };
 
@@ -85,6 +90,13 @@ export const getCorrectExplanations = (rizzMode: RizzMode, playerChoice: string,
       "Good decision! You made the safe play by catching the ball. Sometimes the smart choice is the best choice.",
       "Perfect! First base was the right call here. You took the guaranteed out and prevented any complications.",
       "Well done! You made the optimal play for this situation. Keep reading the field like this and you'll do great.",
+    ],
+    mcdonalds: [
+      "Ba da ba ba ba! You're lovin' that catch! Your throw to second was hot and fresh like our fries! 🍟",
+      "Two all-beef patties... I mean two outs! That double play was served faster than a Big Mac! Over 99 billion plays served! 🍔",
+      "Would you like to make that a combo? Because you just made the smart play! That's some premium quality baseball right there! 👑",
+      "First base - have it your way! Wait, that's the other guys... I mean, you deserve a break today for that perfect throw! 🎯",
+      "That play was fresher than our salads! You've got the golden arches of baseball talent! Keep up the McExcellent work! ✨",
     ]
   };
 
@@ -144,6 +156,13 @@ export const getIncorrectExplanations = (rizzMode: RizzMode, scenario: any, corr
       "You missed the force out at third base. That would have stopped the lead runner from advancing to scoring position.",
       "Second base was an easy force out since the runner has to advance. Don't make it harder than it needs to be!",
       "That runner is now in scoring position! A throw to third base would have kept them from advancing.",
+    ],
+    mcdonalds: [
+      "Uh oh! Looks like you missed the happy meal here! First base was served on a golden platter! 🍟",
+      "Sir, this is McDonald's! With bases loaded, you gotta throw home faster than we serve McNuggets! 🏠",
+      "That's not lovin' it! The force out at third was as obvious as our golden arches! Don't let that runner supersize their lead! 🔔",
+      "Would you like fries with that mistake? Second base was easier than ordering from our value menu! 💸",
+      "McOops! That runner's about to score! Should've thrown to third - that's our McRecommendation! 🚫",
     ]
   };
 
@@ -273,6 +292,22 @@ export const getRandomProTip = (rizzMode: RizzMode, isCorrect: boolean): string 
         'Practice makes perfect! Keep working at it.',
         'Learn from this play and apply it next time.',
         'Don\'t get discouraged! Every player makes mistakes.',
+      ]
+    },
+    mcdonalds: {
+      correct: [
+        'You\'re lovin\' those plays! Keep up the McExcellent work! 🍟',
+        'That\'s fresher than our breakfast menu! Stay golden! ⭐',
+        'Ba da ba ba ba! You\'re a natural! Keep serving those wins! 🏆',
+        'Over 99 billion great plays served! You\'re doing fantastic! 📊',
+        'Would you like to supersize that talent? Because you\'re already supersized! 👑',
+      ],
+      incorrect: [
+        'Time to hit the playbooks like our drive-thru hits orders! 📚',
+        'Think before you throw - that\'s our McRecommendation! 🧠',
+        'Practice makes McPerfect! Come back when you\'re ready! 💪',
+        'Learn from your mistakes - they\'re part of a balanced baseball diet! 📈',
+        'Don\'t worry! Even Ronald McDonald struck out sometimes! 🤡',
       ]
     }
   };

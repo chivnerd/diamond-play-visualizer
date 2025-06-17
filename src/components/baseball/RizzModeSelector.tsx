@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RizzMode, getRizzModeLabel } from '../../utils/rizzModeContent';
@@ -27,6 +26,7 @@ const RizzModeSelector: React.FC<RizzModeSelectorProps> = ({ rizzMode, onRizzMod
           <SelectItem value="spanish">{getRizzModeLabel('spanish')}</SelectItem>
           <SelectItem value="liljon">{getRizzModeLabel('liljon')}</SelectItem>
           <SelectItem value="harrypotter">{getRizzModeLabel('harrypotter')}</SelectItem>
+          <SelectItem value="mcdonalds">{getRizzModeLabel('mcdonalds')}</SelectItem>
           <SelectItem value="english">{getRizzModeLabel('english')}</SelectItem>
         </SelectContent>
       </Select>
