@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -185,7 +184,7 @@ const BaseballField = () => {
     <div className="w-full max-w-6xl mx-auto p-6">
       <div className="text-center mb-6">
         <h1 className="text-4xl font-bold text-green-800 mb-2 font-mono pixelated">⚾ BIGMACS DEFENSE RIZZ SCHOOL</h1>
-        <p className="text-lg text-gray-700 font-mono">Learn accurate defensive positioning from real baseball situations!</p>
+        <p className="text-lg text-gray-700 font-mono">This is gonna be EPIC! Let's crush some baseball plays!</p>
       </div>
 
       <div className="flex gap-6">
