@@ -83,28 +83,67 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
 export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario, level: BaseballLevel): boolean => {
   const scenarioName = scenarioData.name.toLowerCase();
   const runnersOnBase = scenarioData.baseRunners;
-  const bestThrow = getBestThrowTarget(scenarioData, runnersOnBase, level);
   
-  // If the player choice matches the best throw, it's correct
-  if (playerChoice === bestThrow) {
-    return true;
-  }
-  
-  // Additional logic for ground balls - first base is ALWAYS a valid out, plus force outs are correct
+  // For ground balls, multiple answers are often correct
   if (scenarioName.includes('ground ball') || scenarioName.includes('grounder') || scenarioName.includes('chopper') || scenarioName.includes('roller')) {
+    
+    // First base is ALWAYS correct on ground balls (get the sure out)
     if (playerChoice === '1st') {
-      return true; // First base is always an out on ground balls
+      return true;
     }
     
-    // Force out situations are also correct when there's a runner to force
+    // Force out situations are also correct
     if (runnersOnBase.includes('1st') && playerChoice === '2nd') {
-      return true; // Force out at second - this is ALWAYS correct with runner on first
+      return true; // Force out at second with runner on first
     }
     if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && playerChoice === '3rd') {
-      return true; // Force out at third
+      return true; // Force out at third with runners on first and second
     }
     if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && runnersOnBase.includes('3rd') && playerChoice === 'home') {
-      return true; // Force out at home
+      return true; // Force out at home with bases loaded
+    }
+    
+    // For younger levels, be more lenient - any reasonable throw is acceptable
+    if (level === 'tball' || level === 'coach-pitch') {
+      return true; // All throws are learning opportunities at this level
+    }
+    
+    return false; // No other ground ball throws are correct
+  }
+  
+  // For singles, multiple correct answers based on situation
+  if (scenarioName.includes('single')) {
+    // With runner on second or bases loaded, home is correct
+    if ((runnersOnBase.includes('2nd') || runnersOnBase.length >= 2) && playerChoice === 'home') {
+      return true;
+    }
+    // With runner on first only, third is correct
+    if (runnersOnBase.includes('1st') && !runnersOnBase.includes('2nd') && playerChoice === '3rd') {
+      return true;
+    }
+    // With no runners, second is correct
+    if (runnersOnBase.length === 0 && playerChoice === '2nd') {
+      return true;
+    }
+    // For younger levels, first base is also acceptable
+    if ((level === 'tball' || level === 'coach-pitch') && playerChoice === '1st') {
+      return true;
+    }
+  }
+  
+  // For doubles, multiple correct answers
+  if (scenarioName.includes('double')) {
+    // With runners on base, home is correct
+    if (runnersOnBase.length > 0 && playerChoice === 'home') {
+      return true;
+    }
+    // With no runners, third is correct
+    if (runnersOnBase.length === 0 && playerChoice === '3rd') {
+      return true;
+    }
+    // For younger levels, first base is also acceptable
+    if ((level === 'tball' || level === 'coach-pitch') && playerChoice === '1st') {
+      return true;
     }
   }
   
@@ -114,7 +153,7 @@ export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario,
       return true; // Just catch it
     }
     if (playerChoice === 'catch-throw-2nd') {
-      return true; // Catch and throw to second (1 out, potential for more)
+      return true; // Catch and throw to second
     }
     if (playerChoice === 'catch-tag-1st') {
       return true; // Catch and tag first (DOUBLE PLAY!)
@@ -124,6 +163,20 @@ export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario,
   // For regular pop flies with no runners, only catch is correct
   if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && runnersOnBase.length === 0 && playerChoice === 'catch') {
     return true;
+  }
+  
+  // For sacrifice bunts and wheel plays
+  if (scenarioName.includes('sacrifice bunt') || scenarioName.includes('wheel play')) {
+    if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && playerChoice === '3rd') {
+      return true; // Force out at third
+    }
+    if (runnersOnBase.includes('1st') && !runnersOnBase.includes('2nd') && playerChoice === '2nd') {
+      return true; // Force out at second
+    }
+    // First base is also acceptable (get the sure out)
+    if (playerChoice === '1st') {
+      return true;
+    }
   }
   
   return false;
