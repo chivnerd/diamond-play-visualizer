@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { BaseballLevel, Player, Runner, Ball, GameScenario } from '../types/baseball';
 import { getPlayersForLevel, basePositions } from '../utils/baseballPositions';
 import { getScenariosForLevel } from '../utils/baseballLevels';
-import { getBestThrowTarget, getPlayExplanation, isCorrectThrow } from '../utils/gameLogic';
+import { getBestThrowTarget, getPlayExplanation, isCorrectThrow, isDoublePlay } from '../utils/gameLogic';
 import BaseballFieldVisual from './baseball/BaseballFieldVisual';
 import GameControls from './baseball/GameControls';
 import PlayInfo from './baseball/PlayInfo';
@@ -133,18 +133,20 @@ const BaseballField = () => {
 
   const handlePlayerDecision = (playerChoice: string) => {
     const isCorrect = isCorrectThrow(playerChoice, currentScenario!, level);
+    const isDouble = isDoublePlay(playerChoice, currentScenario!);
     setPlayerDecisionCorrect(isCorrect);
     setAwaitingDecision(false);
 
     if (isCorrect) {
-      // Increment chicken score and show unicorn celebration
-      setChickenScore(prev => prev + 1);
+      // Award chickens - 2 for double play, 1 for regular play
+      const chickensEarned = isDouble ? 2 : 1;
+      setChickenScore(prev => prev + chickensEarned);
       setShowUnicorn(true);
       setTimeout(() => setShowUnicorn(false), 6000);
     }
 
     // Animate the ball to the chosen location (but not for catches)
-    if (playerChoice && playerChoice !== 'catch') {
+    if (playerChoice && !playerChoice.startsWith('catch')) {
       const throwPosition = basePositions[playerChoice as keyof typeof basePositions];
       setBall(prev => ({
         ...prev,
@@ -161,7 +163,7 @@ const BaseballField = () => {
       const explanation = getPlayExplanation(currentScenario!, correctThrowTarget, level);
       setPlayExplanation(explanation);
       setPlayComplete(true);
-    }, playerChoice === 'catch' ? 500 : 1000); // Shorter delay for catches
+    }, playerChoice.startsWith('catch') ? 500 : 1000); // Shorter delay for catches
   };
 
   const nextBatter = () => {

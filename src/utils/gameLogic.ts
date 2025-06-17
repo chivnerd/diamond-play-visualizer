@@ -103,8 +103,36 @@ export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario,
     }
   }
   
-  // For pop flies, only catch is correct
-  if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && playerChoice === 'catch') {
+  // For infield pop flies with runner on first - double play opportunities
+  if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && runnersOnBase.includes('1st')) {
+    if (playerChoice === 'catch') {
+      return true; // Just catch it
+    }
+    if (playerChoice === 'catch-throw-2nd') {
+      return true; // Catch and throw to second
+    }
+    if (playerChoice === 'catch-tag-1st') {
+      return true; // Catch and tag first (DOUBLE PLAY!)
+    }
+  }
+  
+  // For regular pop flies with no runners, only catch is correct
+  if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && runnersOnBase.length === 0 && playerChoice === 'catch') {
+    return true;
+  }
+  
+  return false;
+};
+
+// New function to determine if a play results in a double play
+export const isDoublePlay = (playerChoice: string, scenarioData: GameScenario): boolean => {
+  const scenarioName = scenarioData.name.toLowerCase();
+  const runnersOnBase = scenarioData.baseRunners;
+  
+  // Infield popup with runner on first + catch and tag first = double play
+  if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && 
+      runnersOnBase.includes('1st') && 
+      playerChoice === 'catch-tag-1st') {
     return true;
   }
   
@@ -178,7 +206,7 @@ export const getPlayExplanation = (scenarioData: GameScenario, throwTarget: stri
     if (level === 'tball' || level === 'coach-pitch') {
       explanation += "• Focus on catching the ball first, then making the throw\n";
     }
-  } else if (scenarioName.includes('pop up')) {
+  } else if (scenarioName.includes('pop fly')) {
     explanation += "**Key Actions:**\n";
     explanation += "• Call the ball loudly to avoid collisions\n";
     explanation += "• Get under the ball with two hands\n";

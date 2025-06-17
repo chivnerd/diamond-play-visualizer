@@ -16,7 +16,18 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
   const getAvailableOptions = () => {
     const options = [];
     
-    // For pop flies, only show catch option
+    // For infield pop flies with runner on first, show double play options
+    if ((scenario.name.toLowerCase().includes('pop fly') || scenario.name.toLowerCase().includes('pop up')) && 
+        scenario.baseRunners.includes('1st')) {
+      options.push(
+        { value: 'catch', label: 'CATCH IT!', icon: Target },
+        { value: 'catch-throw-2nd', label: 'CATCH & THROW 2ND', icon: Target },
+        { value: 'catch-tag-1st', label: 'CATCH & TAG 1ST', icon: Target }
+      );
+      return options;
+    }
+    
+    // For regular pop flies, only show catch option
     if (scenario.name.toLowerCase().includes('pop fly') || scenario.name.toLowerCase().includes('pop up')) {
       options.push({ value: 'catch', label: 'CATCH IT!', icon: Target });
       return options;
@@ -53,27 +64,39 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
         textShadow: '1px 1px 0px rgba(255,255,255,0.5)'
       }}>
         Make the right decision to get CHICKENS! 🐔
+        {scenario.baseRunners.includes('1st') && (scenario.name.toLowerCase().includes('pop fly') || scenario.name.toLowerCase().includes('pop up')) && (
+          <br />
+          <span className="text-red-800 font-bold">DOUBLE PLAY OPPORTUNITY! 🔥</span>
+        )}
       </p>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {options.map((option) => {
           const Icon = option.icon;
+          const isDoublePlayOption = option.value === 'catch-tag-1st';
           return (
             <Button
               key={option.value}
               onClick={() => onDecision(option.value)}
-              className="p-4 text-lg font-mono border-4 text-white font-bold h-auto"
+              className={`p-4 text-lg font-mono border-4 text-white font-bold h-auto ${
+                isDoublePlayOption ? 'animate-pulse' : ''
+              }`}
               style={{
-                background: 'linear-gradient(145deg, #4A90E2 0%, #2E5BA8 50%, #4A90E2 100%)',
-                borderColor: '#1E3A5F',
+                background: isDoublePlayOption 
+                  ? 'linear-gradient(145deg, #E74C3C 0%, #C0392B 50%, #E74C3C 100%)'
+                  : 'linear-gradient(145deg, #4A90E2 0%, #2E5BA8 50%, #4A90E2 100%)',
+                borderColor: isDoublePlayOption ? '#922B21' : '#1E3A5F',
                 imageRendering: 'pixelated',
-                boxShadow: '4px 4px 0px #1E3A5F, 6px 6px 0px rgba(0,0,0,0.3)',
+                boxShadow: isDoublePlayOption 
+                  ? '4px 4px 0px #922B21, 6px 6px 0px rgba(0,0,0,0.3)'
+                  : '4px 4px 0px #1E3A5F, 6px 6px 0px rgba(0,0,0,0.3)',
                 textShadow: '2px 2px 0px rgba(0,0,0,0.5)',
                 fontFamily: 'monospace'
               }}
             >
               <Icon className="w-6 h-6 mr-2" />
               {option.label}
+              {isDoublePlayOption && <span className="ml-2">⚡⚡</span>}
             </Button>
           );
         })}
