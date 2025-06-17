@@ -15,6 +15,16 @@ interface Player {
   role: 'fielder' | 'backup' | 'cover' | 'normal';
 }
 
+interface Runner {
+  id: string;
+  base: 'home' | '1st' | '2nd' | '3rd';
+  x: number;
+  y: number;
+  targetX: number;
+  targetY: number;
+  isRunning: boolean;
+}
+
 interface Ball {
   x: number;
   y: number;
@@ -36,6 +46,8 @@ const BaseballField = () => {
     { id: 'RF', position: 'Right Field', x: 380, y: 120, originalX: 380, originalY: 120, isActive: false, role: 'normal' },
   ]);
 
+  const [runners, setRunners] = useState<Runner[]>([]);
+
   const [ball, setBall] = useState<Ball>({
     x: 250,
     y: 350,
@@ -47,55 +59,96 @@ const BaseballField = () => {
   const [scenario, setScenario] = useState<string>('');
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const basePositions = {
+    home: { x: 250, y: 350 },
+    '1st': { x: 320, y: 280 },
+    '2nd': { x: 250, y: 210 },
+    '3rd': { x: 180, y: 280 }
+  };
+
+  const generateRunners = () => {
+    const possibleBases: ('1st' | '2nd' | '3rd')[] = ['1st', '2nd', '3rd'];
+    const numRunners = Math.floor(Math.random() * 3) + 1; // 1-3 runners
+    const occupiedBases = possibleBases.sort(() => 0.5 - Math.random()).slice(0, numRunners);
+    
+    return occupiedBases.map((base, index) => ({
+      id: `R${index + 1}`,
+      base,
+      x: basePositions[base].x,
+      y: basePositions[base].y,
+      targetX: basePositions[base].x,
+      targetY: basePositions[base].y,
+      isRunning: false
+    }));
+  };
+
   const scenarios = [
     {
-      name: 'Ground ball to shortstop',
+      name: 'Ground ball to shortstop with runner on 1st',
       ballTarget: { x: 220, y: 220 },
       movements: [
-        { playerId: 'SS', x: 220, y: 220, role: 'fielder' },
-        { playerId: '2B', x: 270, y: 240, role: 'cover' },
-        { playerId: 'CF', x: 220, y: 180, role: 'backup' },
-        { playerId: '1B', x: 300, y: 260, role: 'cover' }
+        { playerId: 'SS', x: 220, y: 220, role: 'fielder' as const },
+        { playerId: '2B', x: 270, y: 240, role: 'cover' as const },
+        { playerId: 'CF', x: 220, y: 180, role: 'backup' as const },
+        { playerId: '1B', x: 300, y: 260, role: 'cover' as const }
+      ],
+      runnerTargets: [
+        { base: '1st' as const, targetBase: '2nd' as const }
       ]
     },
     {
-      name: 'Fly ball to right field',
+      name: 'Fly ball to right field with runners on 1st and 2nd',
       ballTarget: { x: 380, y: 120 },
       movements: [
-        { playerId: 'RF', x: 380, y: 120, role: 'fielder' },
-        { playerId: 'CF', x: 320, y: 100, role: 'backup' },
-        { playerId: '1B', x: 300, y: 260, role: 'cover' },
-        { playerId: '2B', x: 270, y: 240, role: 'cover' }
+        { playerId: 'RF', x: 380, y: 120, role: 'fielder' as const },
+        { playerId: 'CF', x: 320, y: 100, role: 'backup' as const },
+        { playerId: '1B', x: 300, y: 260, role: 'cover' as const },
+        { playerId: '2B', x: 270, y: 240, role: 'cover' as const }
+      ],
+      runnerTargets: [
+        { base: '1st' as const, targetBase: '1st' as const }, // stays put on fly ball
+        { base: '2nd' as const, targetBase: '3rd' as const }
       ]
     },
     {
-      name: 'Ground ball to third base',
+      name: 'Ground ball to third base with bases loaded',
       ballTarget: { x: 180, y: 280 },
       movements: [
-        { playerId: '3B', x: 180, y: 280, role: 'fielder' },
-        { playerId: 'SS', x: 200, y: 240, role: 'cover' },
-        { playerId: 'LF', x: 150, y: 220, role: 'backup' },
-        { playerId: '1B', x: 300, y: 260, role: 'cover' }
+        { playerId: '3B', x: 180, y: 280, role: 'fielder' as const },
+        { playerId: 'SS', x: 200, y: 240, role: 'cover' as const },
+        { playerId: 'LF', x: 150, y: 220, role: 'backup' as const },
+        { playerId: 'C', x: 250, y: 340, role: 'cover' as const }
+      ],
+      runnerTargets: [
+        { base: '1st' as const, targetBase: '2nd' as const },
+        { base: '2nd' as const, targetBase: '3rd' as const },
+        { base: '3rd' as const, targetBase: 'home' as const }
       ]
     },
     {
-      name: 'Line drive to center field',
+      name: 'Line drive to center field with runner on 2nd',
       ballTarget: { x: 250, y: 80 },
       movements: [
-        { playerId: 'CF', x: 250, y: 80, role: 'fielder' },
-        { playerId: 'LF', x: 200, y: 100, role: 'backup' },
-        { playerId: 'RF', x: 300, y: 100, role: 'backup' },
-        { playerId: '2B', x: 270, y: 240, role: 'cover' }
+        { playerId: 'CF', x: 250, y: 80, role: 'fielder' as const },
+        { playerId: 'LF', x: 200, y: 100, role: 'backup' as const },
+        { playerId: 'RF', x: 300, y: 100, role: 'backup' as const },
+        { playerId: '2B', x: 270, y: 240, role: 'cover' as const }
+      ],
+      runnerTargets: [
+        { base: '2nd' as const, targetBase: '3rd' as const }
       ]
     },
     {
-      name: 'Ground ball to first base',
+      name: 'Ground ball to first base with runner on 3rd',
       ballTarget: { x: 320, y: 280 },
       movements: [
-        { playerId: '1B', x: 320, y: 280, role: 'fielder' },
-        { playerId: 'P', x: 300, y: 260, role: 'cover' },
-        { playerId: 'RF', x: 350, y: 200, role: 'backup' },
-        { playerId: '2B', x: 270, y: 240, role: 'cover' }
+        { playerId: '1B', x: 320, y: 280, role: 'fielder' as const },
+        { playerId: 'P', x: 300, y: 260, role: 'cover' as const },
+        { playerId: 'RF', x: 350, y: 200, role: 'backup' as const },
+        { playerId: 'C', x: 250, y: 340, role: 'cover' as const }
+      ],
+      runnerTargets: [
+        { base: '3rd' as const, targetBase: 'home' as const }
       ]
     }
   ];
@@ -103,7 +156,19 @@ const BaseballField = () => {
   const startScenario = () => {
     if (isAnimating) return;
     
-    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+    // Generate random runners first
+    const newRunners = generateRunners();
+    setRunners(newRunners);
+    
+    // Find compatible scenario based on runners
+    const compatibleScenarios = scenarios.filter(s => 
+      s.runnerTargets.every(rt => newRunners.some(r => r.base === rt.base))
+    );
+    
+    const randomScenario = compatibleScenarios.length > 0 
+      ? compatibleScenarios[Math.floor(Math.random() * compatibleScenarios.length)]
+      : scenarios[Math.floor(Math.random() * scenarios.length)];
+    
     setScenario(randomScenario.name);
     setIsAnimating(true);
 
@@ -130,9 +195,30 @@ const BaseballField = () => {
         }
         return { ...player, isActive: false, role: 'normal' };
       }));
+
+      // Animate runners
+      setRunners(prev => prev.map(runner => {
+        const runnerTarget = randomScenario.runnerTargets.find(rt => rt.base === runner.base);
+        if (runnerTarget) {
+          const targetPos = basePositions[runnerTarget.targetBase];
+          return {
+            ...runner,
+            targetX: targetPos.x,
+            targetY: targetPos.y,
+            isRunning: true
+          };
+        }
+        return runner;
+      }));
     }, 500);
 
     setTimeout(() => {
+      setRunners(prev => prev.map(runner => ({
+        ...runner,
+        x: runner.targetX,
+        y: runner.targetY,
+        isRunning: false
+      })));
       setIsAnimating(false);
     }, 3000);
   };
@@ -152,6 +238,7 @@ const BaseballField = () => {
       targetY: 350,
       isMoving: false
     });
+    setRunners([]);
     setScenario('');
     setIsAnimating(false);
   };
@@ -239,6 +326,23 @@ const BaseballField = () => {
                 </div>
               ))}
 
+              {/* Runners */}
+              {runners.map((runner) => (
+                <div
+                  key={runner.id}
+                  className={`absolute w-6 h-6 rounded-full bg-red-500 border-2 border-white shadow-lg transition-all duration-2000 ease-out flex items-center justify-center text-white text-xs font-bold ${
+                    runner.isRunning ? 'animate-bounce' : ''
+                  }`}
+                  style={{
+                    left: `${runner.isRunning ? runner.targetX - 12 : runner.x - 12}px`,
+                    top: `${runner.isRunning ? runner.targetY - 12 : runner.y - 12}px`,
+                  }}
+                  title="Base Runner"
+                >
+                  🏃
+                </div>
+              ))}
+
               {/* Ball */}
               <div
                 className={`absolute w-4 h-4 bg-white rounded-full border-2 border-red-500 shadow-lg transition-all duration-1000 ease-out ${
@@ -298,11 +402,15 @@ const BaseballField = () => {
                       <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                       <span>Covers the base</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                      <span>🏃 Base runner</span>
+                    </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-600">Click "Hit the Ball!" to see a random defensive scenario.</p>
+              <p className="text-gray-600">Click "Hit the Ball!" to see a random defensive scenario with runners.</p>
             )}
           </Card>
 
@@ -311,6 +419,7 @@ const BaseballField = () => {
             <div className="space-y-3 text-sm">
               <p>🎯 Watch as the ball gets hit to different areas of the field</p>
               <p>👥 See how players move to their defensive positions</p>
+              <p>🏃 Observe how runners advance on different types of hits</p>
               <p>📚 Learn who fields, backs up, and covers bases</p>
               <p>🔄 Try different scenarios by clicking "Hit the Ball!" again</p>
             </div>
