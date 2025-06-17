@@ -47,19 +47,19 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
   const options = getAvailableOptions();
 
   return (
-    <div className="mt-6 p-6 border-4 border-yellow-600 text-center" style={{
+    <div className="mt-4 sm:mt-6 p-3 sm:p-6 border-4 border-yellow-600 text-center" style={{
       background: 'linear-gradient(145deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
       imageRendering: 'pixelated',
       boxShadow: '6px 6px 0px #B8860B, 8px 8px 0px rgba(0,0,0,0.3)'
     }}>
-      <h3 className="text-2xl font-bold font-mono text-orange-900 mb-4" style={{
+      <h3 className="text-lg sm:text-2xl font-bold font-mono text-orange-900 mb-3 sm:mb-4" style={{
         fontFamily: 'monospace',
         textShadow: '2px 2px 0px #FFFFFF'
       }}>
         🎯 WHERE DO YOU THROW THE BALL?
       </h3>
       
-      <div className="text-lg font-mono text-orange-800 mb-6" style={{
+      <div className="text-sm sm:text-lg font-mono text-orange-800 mb-4 sm:mb-6" style={{
         fontFamily: 'monospace',
         textShadow: '1px 1px 0px rgba(255,255,255,0.5)'
       }}>
@@ -69,7 +69,7 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {options.map((option) => {
           const Icon = option.icon;
           const isDoublePlayOption = option.value === 'catch-tag-1st';
@@ -77,7 +77,7 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
             <Button
               key={option.value}
               onClick={() => onDecision(option.value)}
-              className={`p-4 text-lg font-mono border-4 text-white font-bold h-auto ${
+              className={`p-3 sm:p-4 text-sm sm:text-lg font-mono border-4 text-white font-bold h-auto min-h-[3rem] sm:min-h-[4rem] ${
                 isDoublePlayOption ? 'animate-pulse' : ''
               }`}
               style={{
@@ -93,9 +93,9 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
                 fontFamily: 'monospace'
               }}
             >
-              <Icon className="w-6 h-6 mr-2" />
-              {option.label}
-              {isDoublePlayOption && <span className="ml-2">⚡⚡</span>}
+              <Icon className="w-4 h-4 sm:w-6 sm:h-6 mr-1 sm:mr-2" />
+              <span className="break-words">{option.label}</span>
+              {isDoublePlayOption && <span className="ml-1 sm:ml-2">⚡⚡</span>}
             </Button>
           );
         })}

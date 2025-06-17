@@ -19,21 +19,21 @@ const ForceOutIndicators: React.FC<ForceOutIndicatorsProps> = ({ baseRunners, sc
     }
 
     // First base is ALWAYS a force out on ground balls (batter running to first)
-    forceOuts.push({ base: '1st', x: 320, y: 280 });
+    forceOuts.push({ base: '1st', x: 64, y: 70 }); // percentage-based positioning
 
     // Force out at second if runner on first
     if (baseRunners.includes('1st')) {
-      forceOuts.push({ base: '2nd', x: 245, y: 205 });
+      forceOuts.push({ base: '2nd', x: 49, y: 51.25 });
     }
 
     // Force out at third if runners on first and second
     if (baseRunners.includes('1st') && baseRunners.includes('2nd')) {
-      forceOuts.push({ base: '3rd', x: 175, y: 275 });
+      forceOuts.push({ base: '3rd', x: 36, y: 70 });
     }
 
     // Force out at home if bases loaded
     if (baseRunners.includes('1st') && baseRunners.includes('2nd') && baseRunners.includes('3rd')) {
-      forceOuts.push({ base: 'home', x: 245, y: 345 });
+      forceOuts.push({ base: 'home', x: 50, y: 86.25 });
     }
 
     return forceOuts;
@@ -51,10 +51,10 @@ const ForceOutIndicators: React.FC<ForceOutIndicatorsProps> = ({ baseRunners, sc
           <div
             className="absolute animate-pulse"
             style={{
-              left: `${forceOut.x - 20}px`,
-              top: `${forceOut.y - 20}px`,
-              width: '40px',
-              height: '40px',
+              left: `${forceOut.x - 4}%`,
+              top: `${forceOut.y - 5}%`,
+              width: '8%',
+              height: '10%',
               border: '3px solid #FF4444',
               borderRadius: '50%',
               background: 'rgba(255, 68, 68, 0.2)',
@@ -65,13 +65,14 @@ const ForceOutIndicators: React.FC<ForceOutIndicatorsProps> = ({ baseRunners, sc
           
           {/* Force out label */}
           <div
-            className="absolute text-xs font-bold font-mono text-red-600 bg-white px-1 border border-red-600 rounded"
+            className="absolute font-bold font-mono text-red-600 bg-white px-1 border border-red-600 rounded"
             style={{
-              left: `${forceOut.x - 15}px`,
-              top: `${forceOut.y - 35}px`,
+              left: `${forceOut.x - 3}%`,
+              top: `${forceOut.y - 8.75}%`,
               pointerEvents: 'none',
               zIndex: 11,
-              textShadow: '1px 1px 0px rgba(255,255,255,0.8)'
+              textShadow: '1px 1px 0px rgba(255,255,255,0.8)',
+              fontSize: 'min(0.5rem, 2vw)'
             }}
           >
             FORCE

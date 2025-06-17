@@ -19,11 +19,11 @@ const GameControls: React.FC<GameControlsProps> = ({
   playComplete
 }) => {
   return (
-    <div className="flex justify-center gap-4 mt-6">
+    <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-4 sm:mt-6">
       <Button 
         onClick={onStartScenario} 
         disabled={isAnimating || playComplete}
-        className="px-6 py-3 text-lg font-mono border-4 text-white font-bold"
+        className="px-4 sm:px-6 py-3 text-base sm:text-lg font-mono border-4 text-white font-bold min-h-[3rem]"
         style={{ 
           background: isAnimating || playComplete 
             ? 'linear-gradient(145deg, #666 0%, #444 50%, #666 100%)' 
@@ -35,14 +35,14 @@ const GameControls: React.FC<GameControlsProps> = ({
           fontFamily: 'monospace'
         }}
       >
-        <Play className="w-5 h-5 mr-2" />
+        <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
         {isAnimating ? 'WATCH THE PLAY!' : 'HIT THE BALL!'}
       </Button>
       
       {playComplete && (
         <Button 
           onClick={onNextBatter} 
-          className="px-6 py-3 text-lg font-mono border-4 text-white font-bold"
+          className="px-4 sm:px-6 py-3 text-base sm:text-lg font-mono border-4 text-white font-bold min-h-[3rem]"
           style={{ 
             background: 'linear-gradient(145deg, #5CB85C 0%, #449D44 50%, #5CB85C 100%)',
             borderColor: '#2E7D32',
@@ -52,14 +52,14 @@ const GameControls: React.FC<GameControlsProps> = ({
             fontFamily: 'monospace'
           }}
         >
-          <ArrowRight className="w-5 h-5 mr-2" />
+          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
           NEXT BATTER
         </Button>
       )}
       
       <Button 
         onClick={onReset} 
-        className="px-6 py-3 text-lg font-mono border-4 text-white font-bold"
+        className="px-4 sm:px-6 py-3 text-base sm:text-lg font-mono border-4 text-white font-bold min-h-[3rem]"
         style={{ 
           background: 'linear-gradient(145deg, #D9534F 0%, #C9302C 50%, #D9534F 100%)',
           borderColor: '#AC2925',
@@ -69,7 +69,7 @@ const GameControls: React.FC<GameControlsProps> = ({
           fontFamily: 'monospace'
         }}
       >
-        <RotateCcw className="w-5 h-5 mr-2" />
+        <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
         RESET
       </Button>
     </div>
