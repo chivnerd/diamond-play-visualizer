@@ -44,102 +44,202 @@ const BaseballFieldVisual: React.FC<BaseballFieldVisualProps> = ({
         }}
       ></div>
 
-      {/* Infield dirt (brown/tan) */}
+      {/* Infield dirt - proper diamond shape */}
       <div 
         className="absolute" 
         style={{
           width: '60%',
-          height: '75%',
+          height: '60%',
           left: '20%',
-          top: '25%',
-          background: '#D2691E',
-          borderRadius: '50%',
-          opacity: 0.8
+          top: '30%',
+          background: '#CD853F',
+          transform: 'rotate(45deg)',
+          borderRadius: '8px'
         }}
       ></div>
 
-      {/* Pitcher's mound (tan/brown mound) */}
+      {/* Base paths - dirt lines connecting bases */}
+      {/* First to second base path */}
       <div 
-        className="absolute border-2 border-gray-700" 
-        style={{ 
-          left: '48%', 
-          top: '67.5%',
-          width: '4%',
-          height: '5%',
-          background: '#CD853F',
-          borderRadius: '50%',
-          boxShadow: 'inset 2px 2px 4px rgba(0,0,0,0.3)'
+        className="absolute bg-yellow-700" 
+        style={{
+          width: '2%',
+          height: '25%',
+          left: '58%',
+          top: '52%',
+          transformOrigin: 'bottom',
+          transform: 'rotate(-45deg)'
         }}
       ></div>
+      
+      {/* Second to third base path */}
+      <div 
+        className="absolute bg-yellow-700" 
+        style={{
+          width: '2%',
+          height: '25%',
+          left: '40%',
+          top: '52%',
+          transformOrigin: 'bottom',
+          transform: 'rotate(45deg)'
+        }}
+      ></div>
+
+      {/* Third to home base path */}
+      <div 
+        className="absolute bg-yellow-700" 
+        style={{
+          width: '2%',
+          height: '25%',
+          left: '40%',
+          top: '67%',
+          transformOrigin: 'top',
+          transform: 'rotate(-45deg)'
+        }}
+      ></div>
+
+      {/* Home to first base path */}
+      <div 
+        className="absolute bg-yellow-700" 
+        style={{
+          width: '2%',
+          height: '25%',
+          left: '58%',
+          top: '67%',
+          transformOrigin: 'top',
+          transform: 'rotate(45deg)'
+        }}
+      ></div>
+
+      {/* Pitcher's mound - more realistic circular mound */}
+      <div 
+        className="absolute border-2 border-gray-600" 
+        style={{ 
+          left: '46%', 
+          top: '65%',
+          width: '8%',
+          height: '10%',
+          background: 'radial-gradient(circle, #DEB887 30%, #CD853F 70%)',
+          borderRadius: '50%',
+          boxShadow: 'inset 2px 2px 8px rgba(0,0,0,0.4), 2px 2px 6px rgba(0,0,0,0.3)'
+        }}
+      >
+        {/* Pitcher's rubber */}
+        <div 
+          className="absolute bg-white border border-gray-500"
+          style={{
+            width: '60%',
+            height: '8%',
+            left: '20%',
+            top: '46%',
+            borderRadius: '2px'
+          }}
+        ></div>
+      </div>
         
-      {/* Home plate (white pentagon shape with H icon) */}
+      {/* Home plate - proper pentagon shape */}
       <div 
         className="absolute border-2 border-gray-700 flex items-center justify-center" 
         style={{ 
-          left: '48%', 
-          top: '85%',
-          width: '4%',
-          height: '5%',
+          left: '47%', 
+          top: '83%',
+          width: '6%',
+          height: '7%',
           background: '#FFFFFF',
           clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
-          boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+          boxShadow: '2px 2px 4px rgba(0,0,0,0.4)'
         }}
       >
-        <span className="text-black font-bold font-mono" style={{ fontSize: 'min(0.6rem, 2.5vw)' }}>H</span>
-      </div>
-        
-      {/* First base (white square with 1 icon) */}
-      <div 
-        className="absolute border-2 border-gray-700 flex items-center justify-center" 
-        style={{ 
-          left: '62%', 
-          top: '67.5%',
-          width: '4%',
-          height: '5%',
-          background: '#FFFFFF',
-          boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
-        }}
-      >
-        <span className="text-black font-bold font-mono" style={{ fontSize: 'min(0.6rem, 2.5vw)' }}>1</span>
+        <span className="text-black font-bold font-mono" style={{ fontSize: 'min(0.7rem, 2.8vw)' }}>H</span>
       </div>
 
-      {/* Second base (white square) */}
+      {/* Batter's boxes */}
       <div 
-        className="absolute border-2 border-gray-700" 
-        style={{ 
-          left: '49%', 
-          top: '51.25%',
-          width: '2%',
-          height: '2.5%',
-          background: '#FFFFFF',
-          transform: 'rotate(45deg)',
-          boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+        className="absolute border-2 border-white"
+        style={{
+          left: '44%',
+          top: '83%',
+          width: '2.5%',
+          height: '6%',
+          background: 'rgba(205, 133, 63, 0.3)'
         }}
       ></div>
-
-      {/* Third base (white square with 3 icon) */}
+      <div 
+        className="absolute border-2 border-white"
+        style={{
+          left: '53.5%',
+          top: '83%',
+          width: '2.5%',
+          height: '6%',
+          background: 'rgba(205, 133, 63, 0.3)'
+        }}
+      ></div>
+        
+      {/* First base - square base at proper angle */}
       <div 
         className="absolute border-2 border-gray-700 flex items-center justify-center" 
         style={{ 
-          left: '34%', 
-          top: '67.5%',
-          width: '4%',
-          height: '5%',
+          left: '60%', 
+          top: '65%',
+          width: '5%',
+          height: '6%',
           background: '#FFFFFF',
-          boxShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+          transform: 'rotate(45deg)',
+          boxShadow: '2px 2px 4px rgba(0,0,0,0.4)'
         }}
       >
-        <span className="text-black font-bold font-mono" style={{ fontSize: 'min(0.6rem, 2.5vw)' }}>3</span>
+        <span className="text-black font-bold font-mono" style={{ 
+          fontSize: 'min(0.6rem, 2.5vw)',
+          transform: 'rotate(-45deg)'
+        }}>1</span>
       </div>
 
-      {/* Foul lines */}
+      {/* Second base - proper diamond orientation */}
+      <div 
+        className="absolute border-2 border-gray-700 flex items-center justify-center" 
+        style={{ 
+          left: '47.5%', 
+          top: '49%',
+          width: '5%',
+          height: '6%',
+          background: '#FFFFFF',
+          transform: 'rotate(45deg)',
+          boxShadow: '2px 2px 4px rgba(0,0,0,0.4)'
+        }}
+      >
+        <span className="text-black font-bold font-mono" style={{ 
+          fontSize: 'min(0.6rem, 2.5vw)',
+          transform: 'rotate(-45deg)'
+        }}>2</span>
+      </div>
+
+      {/* Third base - square base at proper angle */}
+      <div 
+        className="absolute border-2 border-gray-700 flex items-center justify-center" 
+        style={{ 
+          left: '35%', 
+          top: '65%',
+          width: '5%',
+          height: '6%',
+          background: '#FFFFFF',
+          transform: 'rotate(45deg)',
+          boxShadow: '2px 2px 4px rgba(0,0,0,0.4)'
+        }}
+      >
+        <span className="text-black font-bold font-mono" style={{ 
+          fontSize: 'min(0.6rem, 2.5vw)',
+          transform: 'rotate(-45deg)'
+        }}>3</span>
+      </div>
+
+      {/* Foul lines - extending from home to first and third */}
       <div 
         className="absolute bg-white" 
         style={{
-          width: '0.4%',
-          height: '50%',
-          left: '49.8%',
-          top: '50%',
+          width: '0.5%',
+          height: '45%',
+          left: '49.75%',
+          top: '45%',
           transformOrigin: 'bottom',
           transform: 'rotate(45deg)'
         }}
@@ -147,10 +247,10 @@ const BaseballFieldVisual: React.FC<BaseballFieldVisualProps> = ({
       <div 
         className="absolute bg-white" 
         style={{
-          width: '0.4%',
-          height: '50%',
-          left: '49.8%',
-          top: '50%',
+          width: '0.5%',
+          height: '45%',
+          left: '49.75%',
+          top: '45%',
           transformOrigin: 'bottom',
           transform: 'rotate(-45deg)'
         }}
