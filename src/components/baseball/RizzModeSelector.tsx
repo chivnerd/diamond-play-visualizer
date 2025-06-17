@@ -26,6 +26,7 @@ const RizzModeSelector: React.FC<RizzModeSelectorProps> = ({ rizzMode, onRizzMod
           <SelectItem value="shakespeare">{getRizzModeLabel('shakespeare')}</SelectItem>
           <SelectItem value="spanish">{getRizzModeLabel('spanish')}</SelectItem>
           <SelectItem value="liljon">{getRizzModeLabel('liljon')}</SelectItem>
+          <SelectItem value="english">{getRizzModeLabel('english')}</SelectItem>
         </SelectContent>
       </Select>
     </div>

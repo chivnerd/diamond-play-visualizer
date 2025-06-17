@@ -1,4 +1,5 @@
-export type RizzMode = 'youtuber' | 'shakespeare' | 'spanish' | 'liljon';
+
+export type RizzMode = 'youtuber' | 'shakespeare' | 'spanish' | 'liljon' | 'english';
 
 export const getRizzModeLabel = (mode: RizzMode): string => {
   switch (mode) {
@@ -6,6 +7,7 @@ export const getRizzModeLabel = (mode: RizzMode): string => {
     case 'shakespeare': return '🎭 Shakespeare';
     case 'spanish': return '🌶️ Spanish';
     case 'liljon': return '🎵 Lil Jon';
+    case 'english': return '🇺🇸 Plain English';
   }
 };
 
@@ -26,6 +28,10 @@ export const getButtonText = (rizzMode: RizzMode, isCorrect: boolean): string =>
     liljon: {
       correct: 'YEAHHH! NEXT UP! OKAYYYY!',
       incorrect: 'WHAT?! TRY AGAIN! YEAHHH!'
+    },
+    english: {
+      correct: 'Great job! Next batter',
+      incorrect: 'Try again!'
     }
   };
 
@@ -61,6 +67,13 @@ export const getCorrectExplanations = (rizzMode: RizzMode, playerChoice: string,
       "YEAHHH! OKAYYYY! Smart play right there! WHAT?! Sometimes you gotta keep it simple! YEAHHH! Respect! OKAYYYY! 🙌",
       "WHAAAAAT?! First base money! YEAHHH! OKAYYYY! You understood the assignment! WHAT?! No mistakes here! YEAHHH! 💰",
       "OKAYYYY! YEAHHH! That play was CRUNK! WHAT?! You brought the energy! YEAHHH! Keep it going! OKAYYYY! 🎉",
+    ],
+    english: [
+      "Nice catch! Your throw to second base was a solid choice. You secured the out and made the right play.",
+      "Excellent double play! You turned two outs perfectly. This is exactly how you control the game and keep runners from advancing.",
+      "Good decision! You made the safe play by catching the ball. Sometimes the smart choice is the best choice.",
+      "Perfect! First base was the right call here. You took the guaranteed out and prevented any complications.",
+      "Well done! You made the optimal play for this situation. Keep reading the field like this and you'll do great.",
     ]
   };
 
@@ -106,6 +119,13 @@ export const getIncorrectExplanations = (rizzMode: RizzMode, scenario: any, corr
       "WHAAAAAT?! Third base force out! YEAHHH! OKAYYYY! Stop that runner! WHAT?! You missed that one! YEAHHH! 🛑",
       "NOOOO! WHAT?! Second base was EASY! YEAHHH! OKAYYYY! They gotta run! WHAT?! Why make it hard?! YEAHHH! 🤷‍♂️",
       "WHAAAAAT?! OKAYYYY! That runner bout to score! YEAHHH! Third base was the move! WHAT?! You slept on that one! OKAYYYY! 😴",
+    ],
+    english: [
+      "First base was the better choice here. You had a guaranteed out, but you chose a riskier play. Always take the sure thing when you can!",
+      "With bases loaded, you need to throw home to prevent the run from scoring. First base won't help when they're about to score!",
+      "You missed the force out at third base. That would have stopped the lead runner from advancing to scoring position.",
+      "Second base was an easy force out since the runner has to advance. Don't make it harder than it needs to be!",
+      "That runner is now in scoring position! A throw to third base would have kept them from advancing.",
     ]
   };
 
@@ -203,6 +223,22 @@ export const getRandomProTip = (rizzMode: RizzMode, isCorrect: boolean): string 
         'TRY AGAIN! OKAYYYY! YOU GOT THIS! WHAT?! 💪',
         'LEARN FROM IT! YEAHHH! GET BETTER! OKAYYYY! 📈',
         'NO QUIT! WHAT?! KEEP TRYING! YEAHHH! 🚫',
+      ]
+    },
+    english: {
+      correct: [
+        'Great job! Keep making smart plays like this!',
+        'You\'re getting the hang of it! Stay focused!',
+        'Excellent decision-making! Keep it up!',
+        'You\'re playing with good baseball IQ!',
+        'Nice work! You\'re developing great instincts!',
+      ],
+      incorrect: [
+        'Think about the situation before making your choice.',
+        'Remember to consider all your options before throwing.',
+        'Practice makes perfect! Keep working at it.',
+        'Learn from this play and apply it next time.',
+        'Don\'t get discouraged! Every player makes mistakes.',
       ]
     }
   };
