@@ -59,16 +59,15 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
         🎯 WHERE DO YOU THROW THE BALL?
       </h3>
       
-      <p className="text-lg font-mono text-orange-800 mb-6" style={{
+      <div className="text-lg font-mono text-orange-800 mb-6" style={{
         fontFamily: 'monospace',
         textShadow: '1px 1px 0px rgba(255,255,255,0.5)'
       }}>
-        Make the right decision to get CHICKENS! 🐔
+        <p>Make the right decision to get CHICKENS! 🐔</p>
         {scenario.baseRunners.includes('1st') && (scenario.name.toLowerCase().includes('pop fly') || scenario.name.toLowerCase().includes('pop up')) && (
-          <br />
-          <span className="text-red-800 font-bold">DOUBLE PLAY OPPORTUNITY! 🔥</span>
+          <p className="text-red-800 font-bold">DOUBLE PLAY OPPORTUNITY! 🔥</p>
         )}
-      </p>
+      </div>
 
       <div className="grid grid-cols-1 gap-4">
         {options.map((option) => {
