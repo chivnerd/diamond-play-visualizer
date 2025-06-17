@@ -1,15 +1,23 @@
-
 import React from 'react';
 import { Player, Runner, Ball } from '../../types/baseball';
 import { getPlayerColor, getRoleDescription } from '../../utils/baseballPositions';
+import ForceOutIndicators from './ForceOutIndicators';
 
 interface BaseballFieldVisualProps {
   players: Player[];
   runners: Runner[];
   ball: Ball;
+  scenario?: any;
+  awaitingDecision?: boolean;
 }
 
-const BaseballFieldVisual: React.FC<BaseballFieldVisualProps> = ({ players, runners, ball }) => {
+const BaseballFieldVisual: React.FC<BaseballFieldVisualProps> = ({ 
+  players, 
+  runners, 
+  ball, 
+  scenario, 
+  awaitingDecision = false 
+}) => {
   return (
     <div 
       className="relative rounded-lg overflow-hidden border-4 border-gray-800 shadow-2xl" 
@@ -145,6 +153,14 @@ const BaseballFieldVisual: React.FC<BaseballFieldVisualProps> = ({ players, runn
           transform: 'rotate(-45deg)'
         }}
       ></div>
+
+      {/* Force Out Indicators - show when awaiting decision */}
+      {awaitingDecision && scenario && (
+        <ForceOutIndicators 
+          baseRunners={scenario.baseRunners || []} 
+          scenario={scenario} 
+        />
+      )}
 
       {/* Players with retro styling */}
       {players.map((player) => (

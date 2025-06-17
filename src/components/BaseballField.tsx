@@ -284,7 +284,13 @@ const BaseballField = () => {
             imageRendering: 'pixelated',
             boxShadow: '8px 8px 0px #4A4A4A, 12px 12px 0px rgba(0,0,0,0.3)'
           }}>
-            <BaseballFieldVisual players={players} runners={runners} ball={ball} />
+            <BaseballFieldVisual 
+              players={players} 
+              runners={runners} 
+              ball={ball} 
+              scenario={currentScenario}
+              awaitingDecision={awaitingDecision}
+            />
 
             {awaitingDecision && (
               <DecisionPanel
