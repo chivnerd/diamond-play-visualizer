@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Ball, BaseballLevel } from '../../types/baseball';
@@ -54,14 +55,6 @@ const PlayInfo: React.FC<PlayInfoProps> = ({ scenario, level, ball, playerDecisi
         fontFamily: 'monospace'
       }}>CURRENT PLAY</h3>
       <div className="space-y-4">
-        <div className="p-3 border-4 border-blue-600" style={{
-          background: 'linear-gradient(145deg, #5DADE2 0%, #3498DB 50%, #5DADE2 100%)',
-          imageRendering: 'pixelated'
-        }}>
-          <h4 className="font-semibold text-blue-900 font-mono" style={{ fontFamily: 'monospace' }}>{scenario}</h4>
-          <p className="text-sm text-blue-900 font-mono mt-1" style={{ fontFamily: 'monospace' }}>Level: {level.toUpperCase().replace('-', ' ')}</p>
-        </div>
-
         {playerDecisionCorrect !== null && (
           <div className={`p-3 border-4 ${playerDecisionCorrect ? 'border-green-600' : 'border-red-600'}`} style={{
             background: playerDecisionCorrect 
@@ -128,6 +121,14 @@ const PlayInfo: React.FC<PlayInfoProps> = ({ scenario, level, ball, playerDecisi
               <span>BASE RUNNER</span>
             </div>
           </div>
+        </div>
+
+        <div className="p-3 border-4 border-blue-600" style={{
+          background: 'linear-gradient(145deg, #5DADE2 0%, #3498DB 50%, #5DADE2 100%)',
+          imageRendering: 'pixelated'
+        }}>
+          <h4 className="font-semibold text-blue-900 font-mono" style={{ fontFamily: 'monospace' }}>{scenario}</h4>
+          <p className="text-sm text-blue-900 font-mono mt-1" style={{ fontFamily: 'monospace' }}>Level: {level.toUpperCase().replace('-', ' ')}</p>
         </div>
       </div>
     </Card>
