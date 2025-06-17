@@ -309,6 +309,15 @@ const BaseballField = () => {
           </Card>
         </div>
 
+        {/* Current Play Info - mobile only, above the field */}
+        <div className="lg:hidden">
+          {!playComplete ? (
+            <PlayInfo scenario={scenario} level={level} ball={ball} playerDecisionCorrect={playerDecisionCorrect} />
+          ) : (
+            <PlayAnalysis playExplanation={playExplanation} />
+          )}
+        </div>
+
         <div className="flex-1">
           <Card className="p-3 sm:p-6 border-4 border-stone-800 shadow-2xl relative" style={{ 
             background: 'linear-gradient(145deg, #8B7355 0%, #A0522D 50%, #8B7355 100%)',
@@ -387,15 +396,6 @@ const BaseballField = () => {
           )}
 
           <LevelInfo />
-        </div>
-
-        {/* Mobile info panel */}
-        <div className="lg:hidden">
-          {!playComplete ? (
-            <PlayInfo scenario={scenario} level={level} ball={ball} playerDecisionCorrect={playerDecisionCorrect} />
-          ) : (
-            <PlayAnalysis playExplanation={playExplanation} />
-          )}
         </div>
       </div>
 
