@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -273,14 +274,34 @@ const BaseballField = () => {
             imageRendering: 'pixelated',
             boxShadow: '8px 8px 0px #4A4A4A, 12px 12px 0px rgba(0,0,0,0.3)'
           }}>
+            <BaseballFieldVisual players={players} runners={runners} ball={ball} />
+
+            {awaitingDecision && (
+              <DecisionPanel
+                scenario={currentScenario}
+                level={level}
+                onDecision={handlePlayerDecision}
+              />
+            )}
+
+            {showUnicorn && <CelebrationUnicorn />}
+          </Card>
+
+          <LevelInfo />
+        </div>
+
+        <div className="w-80">
+          {/* Game Controls moved here */}
+          <Card className="p-6 border-4 border-gray-600 bg-gray-100 mb-4" style={{ imageRendering: 'pixelated' }}>
+            <h3 className="text-xl font-bold mb-4 font-mono">GAME CONTROLS</h3>
+            
             {/* Level selector */}
-            <div className="mb-4 flex items-center justify-center gap-4">
-              <label className="text-lg font-bold font-mono text-yellow-200" style={{
-                textShadow: '2px 2px 0px #8B4513',
+            <div className="mb-4 flex flex-col gap-2">
+              <label className="text-sm font-bold font-mono text-gray-700" style={{
                 fontFamily: 'monospace'
               }}>LEAGUE LEVEL:</label>
               <Select value={level} onValueChange={(value: BaseballLevel) => setLevel(value)}>
-                <SelectTrigger className="w-48 font-mono border-4 border-stone-600 bg-stone-200" style={{
+                <SelectTrigger className="w-full font-mono border-4 border-stone-600 bg-stone-200" style={{
                   fontFamily: 'monospace',
                   imageRendering: 'pixelated'
                 }}>
@@ -297,15 +318,7 @@ const BaseballField = () => {
               </Select>
             </div>
 
-            <BaseballFieldVisual players={players} runners={runners} ball={ball} />
-
-            {awaitingDecision ? (
-              <DecisionPanel
-                scenario={currentScenario}
-                level={level}
-                onDecision={handlePlayerDecision}
-              />
-            ) : (
+            {!awaitingDecision && (
               <GameControls
                 onStartScenario={startScenario}
                 onNextBatter={nextBatter}
@@ -314,19 +327,13 @@ const BaseballField = () => {
                 playComplete={playComplete}
               />
             )}
-
-            {showUnicorn && <CelebrationUnicorn />}
           </Card>
-        </div>
 
-        <div className="w-80">
           {!playComplete ? (
             <PlayInfo scenario={scenario} level={level} ball={ball} playerDecisionCorrect={playerDecisionCorrect} />
           ) : (
             <PlayAnalysis playExplanation={playExplanation} />
           )}
-
-          <LevelInfo />
         </div>
       </div>
     </div>
