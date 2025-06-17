@@ -109,13 +109,13 @@ export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario,
     }
   }
   
-  // For infield pop flies with runner on first - double play opportunities
+  // For infield pop flies with runner on first - all catch options are correct
   if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && runnersOnBase.includes('1st')) {
     if (playerChoice === 'catch') {
       return true; // Just catch it
     }
     if (playerChoice === 'catch-throw-2nd') {
-      return true; // Catch and throw to second
+      return true; // Catch and throw to second (1 out, potential for more)
     }
     if (playerChoice === 'catch-tag-1st') {
       return true; // Catch and tag first (DOUBLE PLAY!)
@@ -130,12 +130,12 @@ export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario,
   return false;
 };
 
-// New function to determine if a play results in a double play
+// New function to determine if a play results in a double play (2 chickens)
 export const isDoublePlay = (playerChoice: string, scenarioData: GameScenario): boolean => {
   const scenarioName = scenarioData.name.toLowerCase();
   const runnersOnBase = scenarioData.baseRunners;
   
-  // Infield popup with runner on first + catch and tag first = double play
+  // Only "catch and tag first" results in a guaranteed double play
   if ((scenarioName.includes('pop fly') || scenarioName.includes('pop up')) && 
       runnersOnBase.includes('1st') && 
       playerChoice === 'catch-tag-1st') {

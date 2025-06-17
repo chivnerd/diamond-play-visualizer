@@ -147,10 +147,10 @@ const BaseballField = () => {
       setChickenScore(prev => prev + chickensEarned);
       setShowUnicorn(true);
       setTimeout(() => setShowUnicorn(false), 6000);
-    } else {
-      // Show feedback popup for incorrect decisions
-      setShowFeedbackPopup(true);
     }
+
+    // Show feedback popup for ALL decisions (correct and incorrect)
+    setShowFeedbackPopup(true);
 
     // Animate the ball to the chosen location (but not for catches)
     if (playerChoice && !playerChoice.startsWith('catch')) {
