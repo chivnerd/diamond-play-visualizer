@@ -12,6 +12,7 @@ import PlayAnalysis from './baseball/PlayAnalysis';
 import LevelInfo from './baseball/LevelInfo';
 import DecisionPanel from './baseball/DecisionPanel';
 import CelebrationUnicorn from './baseball/CelebrationUnicorn';
+import FeedbackPopup from './baseball/FeedbackPopup';
 
 const BaseballField = () => {
   const [level, setLevel] = useState<BaseballLevel>('majors');
@@ -36,6 +37,8 @@ const BaseballField = () => {
   const [showUnicorn, setShowUnicorn] = useState(false);
   const [playerDecisionCorrect, setPlayerDecisionCorrect] = useState<boolean | null>(null);
   const [chickenScore, setChickenScore] = useState(0);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [lastPlayerChoice, setLastPlayerChoice] = useState<string>('');
 
   // Initialize players when level changes
   useEffect(() => {
@@ -136,6 +139,7 @@ const BaseballField = () => {
     const isDouble = isDoublePlay(playerChoice, currentScenario!);
     setPlayerDecisionCorrect(isCorrect);
     setAwaitingDecision(false);
+    setLastPlayerChoice(playerChoice);
 
     if (isCorrect) {
       // Award chickens - 2 for double play, 1 for regular play
@@ -143,6 +147,9 @@ const BaseballField = () => {
       setChickenScore(prev => prev + chickensEarned);
       setShowUnicorn(true);
       setTimeout(() => setShowUnicorn(false), 6000);
+    } else {
+      // Show feedback popup for incorrect decisions
+      setShowFeedbackPopup(true);
     }
 
     // Animate the ball to the chosen location (but not for catches)
@@ -197,6 +204,8 @@ const BaseballField = () => {
     setShowUnicorn(false);
     setPlayerDecisionCorrect(null);
     setCorrectThrowTarget(null);
+    setShowFeedbackPopup(false);
+    setLastPlayerChoice('');
   };
 
   const resetScore = () => {
@@ -337,6 +346,16 @@ const BaseballField = () => {
           )}
         </div>
       </div>
+
+      {/* Feedback Popup */}
+      <FeedbackPopup
+        isOpen={showFeedbackPopup}
+        onClose={() => setShowFeedbackPopup(false)}
+        scenario={currentScenario}
+        playerChoice={lastPlayerChoice}
+        correctChoice={correctThrowTarget}
+        level={level}
+      />
     </div>
   );
 };
