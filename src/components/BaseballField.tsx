@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -36,6 +35,7 @@ const BaseballField = () => {
   const [correctThrowTarget, setCorrectThrowTarget] = useState<string | null>(null);
   const [showUnicorn, setShowUnicorn] = useState(false);
   const [playerDecisionCorrect, setPlayerDecisionCorrect] = useState<boolean | null>(null);
+  const [chickenScore, setChickenScore] = useState(0);
 
   // Initialize players when level changes
   useEffect(() => {
@@ -137,7 +137,8 @@ const BaseballField = () => {
     setAwaitingDecision(false);
 
     if (isCorrect) {
-      // Show unicorn celebration
+      // Increment chicken score and show unicorn celebration
+      setChickenScore(prev => prev + 1);
       setShowUnicorn(true);
       setTimeout(() => setShowUnicorn(false), 3000);
     }
@@ -196,6 +197,10 @@ const BaseballField = () => {
     setCorrectThrowTarget(null);
   };
 
+  const resetScore = () => {
+    setChickenScore(0);
+  };
+
   useEffect(() => {
     if (ball.isMoving) {
       const timer = setTimeout(() => {
@@ -227,6 +232,38 @@ const BaseballField = () => {
           fontFamily: 'monospace',
           letterSpacing: '1px'
         }}>Avoid the crash out and GET CHICKENS!</p>
+        
+        {/* Chicken Score Display */}
+        <div className="mt-4 p-4 border-4 border-yellow-600 inline-block" style={{
+          background: 'linear-gradient(145deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+          imageRendering: 'pixelated',
+          boxShadow: '6px 6px 0px #B8860B, 8px 8px 0px rgba(0,0,0,0.3)'
+        }}>
+          <div className="flex items-center justify-center gap-3">
+            <span className="text-2xl">🐔</span>
+            <span className="text-xl font-bold font-mono text-orange-900" style={{
+              fontFamily: 'monospace',
+              textShadow: '2px 2px 0px #FFFFFF'
+            }}>
+              CHICKENS: {chickenScore}
+            </span>
+            <span className="text-2xl">🐔</span>
+          </div>
+          {chickenScore > 0 && (
+            <button
+              onClick={resetScore}
+              className="mt-2 px-3 py-1 text-sm font-mono border-2 border-red-600 text-red-900 font-bold"
+              style={{
+                background: 'linear-gradient(145deg, #F1948A 0%, #E74C3C 50%, #F1948A 100%)',
+                imageRendering: 'pixelated',
+                boxShadow: '2px 2px 0px #A93226',
+                fontFamily: 'monospace'
+              }}
+            >
+              RESET SCORE
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-6">
