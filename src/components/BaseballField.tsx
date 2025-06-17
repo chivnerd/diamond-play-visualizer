@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -31,6 +30,8 @@ interface Ball {
   targetX: number;
   targetY: number;
   isMoving: boolean;
+  isThrown: boolean;
+  throwTarget?: string;
 }
 
 const BaseballField = () => {
@@ -52,17 +53,66 @@ const BaseballField = () => {
     y: 350,
     targetX: 250,
     targetY: 350,
-    isMoving: false
+    isMoving: false,
+    isThrown: false
   });
 
   const [scenario, setScenario] = useState<string>('');
   const [isAnimating, setIsAnimating] = useState(false);
+  const [currentScenario, setCurrentScenario] = useState<any>(null);
 
   const basePositions = {
     home: { x: 250, y: 350 },
     '1st': { x: 320, y: 280 },
     '2nd': { x: 250, y: 210 },
     '3rd': { x: 180, y: 280 }
+  };
+
+  // Function to determine the best base to throw to
+  const getBestThrowTarget = (scenarioData: any, runnersOnBase: string[]) => {
+    const scenarioName = scenarioData.name.toLowerCase();
+    
+    // For sacrifice bunts and wheel plays, go for the force out
+    if (scenarioName.includes('sacrifice bunt') || scenarioName.includes('wheel play')) {
+      if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd')) {
+        return '3rd'; // Force out at third
+      }
+      if (runnersOnBase.includes('1st')) {
+        return '2nd'; // Force out at second
+      }
+    }
+
+    // For singles with runner on second or bases loaded, throw home
+    if (scenarioName.includes('single') && (runnersOnBase.includes('2nd') || runnersOnBase.length >= 2)) {
+      return 'home';
+    }
+
+    // For singles with runner on first, throw to third
+    if (scenarioName.includes('single') && runnersOnBase.includes('1st') && !runnersOnBase.includes('2nd')) {
+      return '3rd';
+    }
+
+    // For doubles with runners on base, throw home
+    if (scenarioName.includes('double') && runnersOnBase.length > 0) {
+      return 'home';
+    }
+
+    // For pop flies, no throw needed (catch for out)
+    if (scenarioName.includes('pop fly')) {
+      return null;
+    }
+
+    // Default to second base for singles with no runners
+    if (scenarioName.includes('single') && runnersOnBase.length === 0) {
+      return '2nd';
+    }
+
+    // Default to third base for doubles with no runners
+    if (scenarioName.includes('double') && runnersOnBase.length === 0) {
+      return '3rd';
+    }
+
+    return '2nd'; // Default fallback
   };
 
   // Accurate defensive scenarios based on the guide
@@ -255,6 +305,7 @@ const BaseballField = () => {
     
     // Pick a random scenario
     const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+    setCurrentScenario(randomScenario);
     
     // Set up runners based on scenario
     const newRunners = randomScenario.baseRunners.map((base, index) => ({
@@ -271,12 +322,13 @@ const BaseballField = () => {
     setScenario(randomScenario.name);
     setIsAnimating(true);
 
-    // Animate ball
+    // Animate ball to hit location
     setBall(prev => ({
       ...prev,
       targetX: randomScenario.ballTarget.x,
       targetY: randomScenario.ballTarget.y,
-      isMoving: true
+      isMoving: true,
+      isThrown: false
     }));
 
     // Animate players
@@ -313,6 +365,7 @@ const BaseballField = () => {
       }
     }, 500);
 
+    // After runners move, throw ball to correct base
     setTimeout(() => {
       setRunners(prev => prev.map(runner => ({
         ...runner,
@@ -320,8 +373,26 @@ const BaseballField = () => {
         y: runner.targetY,
         isRunning: false
       })));
-      setIsAnimating(false);
+
+      // Determine where to throw the ball
+      const throwTarget = getBestThrowTarget(randomScenario, randomScenario.baseRunners);
+      if (throwTarget) {
+        const throwPosition = basePositions[throwTarget as keyof typeof basePositions];
+        setBall(prev => ({
+          ...prev,
+          targetX: throwPosition.x,
+          targetY: throwPosition.y,
+          isMoving: true,
+          isThrown: true,
+          throwTarget
+        }));
+      }
     }, 3000);
+
+    // Reset for next batter
+    setTimeout(() => {
+      resetField();
+    }, 5000);
   };
 
   const resetField = () => {
@@ -337,10 +408,12 @@ const BaseballField = () => {
       y: 350,
       targetX: 250,
       targetY: 350,
-      isMoving: false
+      isMoving: false,
+      isThrown: false
     });
     setRunners([]);
     setScenario('');
+    setCurrentScenario(null);
     setIsAnimating(false);
   };
 
@@ -450,11 +523,12 @@ const BaseballField = () => {
               <div
                 className={`absolute w-4 h-4 bg-white rounded-full border-2 border-red-500 shadow-lg transition-all duration-1000 ease-out ${
                   ball.isMoving ? 'animate-bounce' : ''
-                }`}
+                } ${ball.isThrown ? 'bg-orange-400' : ''}`}
                 style={{
                   left: `${ball.isMoving ? ball.targetX - 8 : ball.x - 8}px`,
                   top: `${ball.isMoving ? ball.targetY - 8 : ball.y - 8}px`,
                 }}
+                title={ball.isThrown ? `Thrown to ${ball.throwTarget}` : 'Baseball'}
               >
                 ⚾
               </div>
@@ -489,6 +563,14 @@ const BaseballField = () => {
                 <div className="p-3 bg-blue-50 rounded-lg">
                   <h4 className="font-semibold text-blue-800">{scenario}</h4>
                 </div>
+                
+                {ball.isThrown && ball.throwTarget && (
+                  <div className="p-3 bg-orange-50 rounded-lg">
+                    <h5 className="font-semibold text-orange-800">
+                      🎯 Ball thrown to: {ball.throwTarget === 'home' ? 'Home Plate' : `${ball.throwTarget} Base`}
+                    </h5>
+                  </div>
+                )}
                 
                 <div className="space-y-2">
                   <h5 className="font-semibold">Player Roles:</h5>
@@ -528,8 +610,9 @@ const BaseballField = () => {
               <p>✂️ See proper cut-off positioning and responsibilities</p>
               <p>🛡️ Learn who covers bases vs. who backs up</p>
               <p>🏃 Watch realistic runner advancement</p>
+              <p>⚾ Ball thrown to the correct base automatically</p>
+              <p>🔄 Auto-reset for next batter after play completes</p>
               <p>📖 Includes special plays like sacrifice bunts and wheel plays</p>
-              <p>🔄 Each scenario teaches specific defensive concepts</p>
             </div>
           </Card>
         </div>
