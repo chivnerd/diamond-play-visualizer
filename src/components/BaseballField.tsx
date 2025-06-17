@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -40,6 +39,7 @@ const BaseballField = () => {
   const [chickenScore, setChickenScore] = useState(0);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [lastPlayerChoice, setLastPlayerChoice] = useState<string>('');
+  const [celebrationVariant, setCelebrationVariant] = useState<'default' | 'epic' | 'legendary' | 'magical'>('default');
 
   // Initialize players when level changes
   useEffect(() => {
@@ -146,6 +146,20 @@ const BaseballField = () => {
       // Award chickens - 2 for double play, 1 for regular play
       const chickensEarned = isDouble ? 2 : 1;
       setChickenScore(prev => prev + chickensEarned);
+      
+      // Determine celebration variant based on score and play type
+      const newScore = chickenScore + chickensEarned;
+      let variant: 'default' | 'epic' | 'legendary' | 'magical' = 'default';
+      
+      if (newScore >= 20) {
+        variant = 'legendary';
+      } else if (newScore >= 10) {
+        variant = 'magical';
+      } else if (isDouble || newScore >= 5) {
+        variant = 'epic';
+      }
+      
+      setCelebrationVariant(variant);
       setShowUnicorn(true);
       setTimeout(() => setShowUnicorn(false), 6000);
     }
@@ -207,6 +221,7 @@ const BaseballField = () => {
     setCorrectThrowTarget(null);
     setShowFeedbackPopup(false);
     setLastPlayerChoice('');
+    setCelebrationVariant('default');
   };
 
   const resetScore = () => {
@@ -340,7 +355,7 @@ const BaseballField = () => {
               />
             )}
 
-            {showUnicorn && <CelebrationUnicorn />}
+            {showUnicorn && <CelebrationUnicorn variant={celebrationVariant} />}
           </Card>
 
           {/* Game Controls below the field */}
