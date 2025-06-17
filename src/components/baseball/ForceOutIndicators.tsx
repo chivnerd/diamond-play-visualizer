@@ -18,6 +18,9 @@ const ForceOutIndicators: React.FC<ForceOutIndicatorsProps> = ({ baseRunners, sc
       return forceOuts;
     }
 
+    // First base is ALWAYS a force out on ground balls (batter running to first)
+    forceOuts.push({ base: '1st', x: 320, y: 280 });
+
     // Force out at second if runner on first
     if (baseRunners.includes('1st')) {
       forceOuts.push({ base: '2nd', x: 245, y: 205 });
