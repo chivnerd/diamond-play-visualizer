@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Play, RotateCcw, ArrowRight } from 'lucide-react';
 
 interface Player {
@@ -34,19 +35,11 @@ interface Ball {
   throwTarget?: string;
 }
 
-const BaseballField = () => {
-  const [players, setPlayers] = useState<Player[]>([
-    { id: 'P', position: 'Pitcher', x: 250, y: 280, originalX: 250, originalY: 280, isActive: false, role: 'normal' },
-    { id: 'C', position: 'Catcher', x: 250, y: 350, originalX: 250, originalY: 350, isActive: false, role: 'normal' },
-    { id: '1B', position: '1st Base', x: 320, y: 280, originalX: 320, originalY: 280, isActive: false, role: 'normal' },
-    { id: '2B', position: '2nd Base', x: 280, y: 220, originalX: 280, originalY: 220, isActive: false, role: 'normal' },
-    { id: '3B', position: '3rd Base', x: 180, y: 280, originalX: 180, originalY: 280, isActive: false, role: 'normal' },
-    { id: 'SS', position: 'Shortstop', x: 220, y: 220, originalX: 220, originalY: 220, isActive: false, role: 'normal' },
-    { id: 'LF', position: 'Left Field', x: 120, y: 120, originalX: 120, originalY: 120, isActive: false, role: 'normal' },
-    { id: 'CF', position: 'Center Field', x: 250, y: 80, originalX: 250, originalY: 80, isActive: false, role: 'normal' },
-    { id: 'RF', position: 'Right Field', x: 380, y: 120, originalX: 380, originalY: 120, isActive: false, role: 'normal' },
-  ]);
+type BaseballLevel = 'tball' | 'coach-pitch' | 'minors' | 'majors' | 'pony' | 'high-school';
 
+const BaseballField = () => {
+  const [level, setLevel] = useState<BaseballLevel>('majors');
+  const [players, setPlayers] = useState<Player[]>([]);
   const [runners, setRunners] = useState<Runner[]>([]);
   const [ball, setBall] = useState<Ball>({
     x: 250,
@@ -70,12 +63,57 @@ const BaseballField = () => {
     '3rd': { x: 180, y: 280 }
   };
 
+  // Get player positions based on level
+  const getPlayersForLevel = (level: BaseballLevel): Player[] => {
+    const baseInfield = [
+      { id: 'P', position: 'Pitcher', x: 250, y: 280, originalX: 250, originalY: 280, isActive: false, role: 'normal' as const },
+      { id: 'C', position: 'Catcher', x: 250, y: 350, originalX: 250, originalY: 350, isActive: false, role: 'normal' as const },
+      { id: '1B', position: '1st Base', x: 320, y: 280, originalX: 320, originalY: 280, isActive: false, role: 'normal' as const },
+      { id: '2B', position: '2nd Base', x: 280, y: 220, originalX: 280, originalY: 220, isActive: false, role: 'normal' as const },
+      { id: '3B', position: '3rd Base', x: 180, y: 280, originalX: 180, originalY: 280, isActive: false, role: 'normal' as const },
+      { id: 'SS', position: 'Shortstop', x: 220, y: 220, originalX: 220, originalY: 220, isActive: false, role: 'normal' as const },
+    ];
+
+    if (level === 'tball' || level === 'coach-pitch' || level === 'minors') {
+      // Four outfielders for younger levels
+      return [
+        ...baseInfield,
+        { id: 'LF', position: 'Left Field', x: 120, y: 120, originalX: 120, originalY: 120, isActive: false, role: 'normal' as const },
+        { id: 'LC', position: 'Left Center', x: 200, y: 80, originalX: 200, originalY: 80, isActive: false, role: 'normal' as const },
+        { id: 'RC', position: 'Right Center', x: 300, y: 80, originalX: 300, originalY: 80, isActive: false, role: 'normal' as const },
+        { id: 'RF', position: 'Right Field', x: 380, y: 120, originalX: 380, originalY: 120, isActive: false, role: 'normal' as const },
+      ];
+    } else {
+      // Traditional three outfielders for older levels
+      return [
+        ...baseInfield,
+        { id: 'LF', position: 'Left Field', x: 120, y: 120, originalX: 120, originalY: 120, isActive: false, role: 'normal' as const },
+        { id: 'CF', position: 'Center Field', x: 250, y: 80, originalX: 250, originalY: 80, isActive: false, role: 'normal' as const },
+        { id: 'RF', position: 'Right Field', x: 380, y: 120, originalX: 380, originalY: 120, isActive: false, role: 'normal' as const },
+      ];
+    }
+  };
+
+  // Initialize players when level changes
+  useEffect(() => {
+    setPlayers(getPlayersForLevel(level));
+  }, [level]);
+
   // Function to get detailed play explanation
   const getPlayExplanation = (scenarioData: any, throwTarget: string | null) => {
     const scenarioName = scenarioData.name.toLowerCase();
     const runnersOnBase = scenarioData.baseRunners;
     
-    let explanation = `**${scenarioData.name}**\n\n`;
+    let explanation = `**${scenarioData.name}** (${level.toUpperCase().replace('-', ' ')} Level)\n\n`;
+    
+    // Level-specific context
+    if (level === 'tball' || level === 'coach-pitch') {
+      explanation += "**Level Context:** At this level, focus on basic positioning and getting outs. Players are still learning fundamentals.\n\n";
+    } else if (level === 'minors') {
+      explanation += "**Level Context:** Players are developing more advanced skills. Infield plays are still most common.\n\n";
+    } else {
+      explanation += "**Level Context:** Advanced defensive positioning with emphasis on preventing runs and strategic play.\n\n";
+    }
     
     // Explain the initial situation
     if (runnersOnBase.length === 0) {
@@ -89,15 +127,24 @@ const BaseballField = () => {
       explanation += "**Key Actions:**\n";
       explanation += "• Left fielder fields the ball cleanly\n";
       explanation += "• Shortstop positions as cut-off man between LF and target base\n";
-      explanation += "• Center fielder backs up the left fielder\n";
+      if (level === 'tball' || level === 'coach-pitch' || level === 'minors') {
+        explanation += "• Left center fielder backs up the left fielder\n";
+      } else {
+        explanation += "• Center fielder backs up the left fielder\n";
+      }
       if (runnersOnBase.includes('2nd') || runnersOnBase.length >= 2) {
         explanation += "• Third baseman becomes cut-off for home plate\n";
         explanation += "• Pitcher backs up the catcher at home\n";
       }
     } else if (scenarioName.includes('single to center')) {
       explanation += "**Key Actions:**\n";
-      explanation += "• Center fielder has the best angle to the ball\n";
-      explanation += "• Both corner outfielders back up the center fielder\n";
+      if (level === 'tball' || level === 'coach-pitch' || level === 'minors') {
+        explanation += "• Left center or right center fielder has the best angle to the ball\n";
+        explanation += "• Other outfielders back up the play\n";
+      } else {
+        explanation += "• Center fielder has the best angle to the ball\n";
+        explanation += "• Both corner outfielders back up the center fielder\n";
+      }
       if (runnersOnBase.includes('1st')) {
         explanation += "• Shortstop becomes cut-off man for throw to third\n";
       } else if (runnersOnBase.includes('2nd')) {
@@ -107,7 +154,11 @@ const BaseballField = () => {
       explanation += "**Key Actions:**\n";
       explanation += "• Right fielder fields the ball\n";
       explanation += "• Second baseman positions as cut-off man\n";
-      explanation += "• Center fielder backs up the right fielder\n";
+      if (level === 'tball' || level === 'coach-pitch' || level === 'minors') {
+        explanation += "• Right center fielder backs up the right fielder\n";
+      } else {
+        explanation += "• Center fielder backs up the right fielder\n";
+      }
     } else if (scenarioName.includes('sacrifice bunt')) {
       explanation += "**Key Actions:**\n";
       explanation += "• All infielders charge to field the bunt\n";
@@ -128,6 +179,22 @@ const BaseballField = () => {
       explanation += "• Outfielder has priority on all fly balls\n";
       explanation += "• Communication is key - outfielder calls off infielders\n";
       explanation += "• Multiple players converge but yield to the outfielder\n";
+    } else if (scenarioName.includes('ground ball')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Infielder fields the ball cleanly\n";
+      explanation += "• Make the sure out - don't rush the throw\n";
+      explanation += "• Communicate with teammates about the play\n";
+      if (level === 'tball' || level === 'coach-pitch') {
+        explanation += "• Focus on catching the ball first, then making the throw\n";
+      }
+    } else if (scenarioName.includes('pop up')) {
+      explanation += "**Key Actions:**\n";
+      explanation += "• Call the ball loudly to avoid collisions\n";
+      explanation += "• Get under the ball with two hands\n";
+      explanation += "• Let the ball come down to you\n";
+      if (level === 'tball' || level === 'coach-pitch') {
+        explanation += "• Focus on catching for the out - don't worry about runners\n";
+      }
     }
 
     // Explain the throw decision
@@ -153,22 +220,32 @@ const BaseballField = () => {
       }
     } else {
       explanation += "\n**No throw needed** - this is a catch for an out!\n";
-      explanation += "• Outfielder has priority and calls off all other fielders\n";
+      explanation += "• Call the ball loudly to avoid confusion\n";
       explanation += "• Clean catch results in an immediate out\n";
     }
 
     // Add tactical insight
     explanation += "\n**Tactical Insight:**\n";
-    if (runnersOnBase.length === 0) {
-      explanation += "• With no pressure from runners, defense can be more aggressive\n";
-      explanation += "• Focus on preventing extra bases and showing arm strength\n";
-    } else if (runnersOnBase.length === 1) {
-      explanation += "• Balance between getting the force out and preventing advancement\n";
-      explanation += "• Communication between fielders is crucial\n";
+    if (level === 'tball' || level === 'coach-pitch') {
+      explanation += "• Focus on fundamentals: catch the ball, then make the play\n";
+      explanation += "• Don't worry about advanced strategies - get the sure out\n";
+      explanation += "• Encourage players and keep the game fun!\n";
+    } else if (level === 'minors') {
+      explanation += "• Players are learning more complex plays\n";
+      explanation += "• Emphasize communication and teamwork\n";
+      explanation += "• Still focus on getting outs over preventing advancement\n";
     } else {
-      explanation += "• Multiple runners create complex decisions\n";
-      explanation += "• Priority is usually preventing runs from scoring\n";
-      explanation += "• Cut-off man must be ready to redirect throw quickly\n";
+      if (runnersOnBase.length === 0) {
+        explanation += "• With no pressure from runners, defense can be more aggressive\n";
+        explanation += "• Focus on preventing extra bases and showing arm strength\n";
+      } else if (runnersOnBase.length === 1) {
+        explanation += "• Balance between getting the force out and preventing advancement\n";
+        explanation += "• Communication between fielders is crucial\n";
+      } else {
+        explanation += "• Multiple runners create complex decisions\n";
+        explanation += "• Priority is usually preventing runs from scoring\n";
+        explanation += "• Cut-off man must be ready to redirect throw quickly\n";
+      }
     }
 
     return explanation;
@@ -178,6 +255,16 @@ const BaseballField = () => {
   const getBestThrowTarget = (scenarioData: any, runnersOnBase: string[]) => {
     const scenarioName = scenarioData.name.toLowerCase();
     
+    // For younger levels, simplify decisions
+    if (level === 'tball' || level === 'coach-pitch') {
+      if (scenarioName.includes('ground ball')) {
+        return '1st'; // Always go for the sure out
+      }
+      if (scenarioName.includes('pop up')) {
+        return null; // Catch for out
+      }
+    }
+
     // For sacrifice bunts and wheel plays, go for the force out
     if (scenarioName.includes('sacrifice bunt') || scenarioName.includes('wheel play')) {
       if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd')) {
@@ -221,190 +308,149 @@ const BaseballField = () => {
     return '2nd'; // Default fallback
   };
 
-  // Accurate defensive scenarios based on the guide
-  const scenarios = [
-    {
-      name: 'Single to left: bases empty',
-      ballTarget: { x: 120, y: 120 },
-      baseRunners: [],
-      movements: [
-        { playerId: 'LF', x: 120, y: 120, role: 'fielder' as const },
-        { playerId: 'SS', x: 200, y: 200, role: 'cutoff' as const }, // Cut-off between LF and 2nd
-        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd base
-        { playerId: 'CF', x: 180, y: 100, role: 'backup' as const }, // Back up LF
-        { playerId: 'P', x: 230, y: 250, role: 'backup' as const }, // Back up throw to 2nd
-        { playerId: '1B', x: 300, y: 270, role: 'cover' as const }, // Check batter touches 1st, then cover inside
-        { playerId: 'C', x: 290, y: 330, role: 'backup' as const }, // Cover 1st in case of wide turn
-        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
-        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Move toward infield for poor throws
-      ],
-      runnerTargets: []
-    },
-    {
-      name: 'Single to center: bases empty',
-      ballTarget: { x: 250, y: 80 },
-      baseRunners: [],
-      movements: [
-        { playerId: 'CF', x: 250, y: 80, role: 'fielder' as const },
-        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Take throw at 2nd
-        { playerId: 'SS', x: 230, y: 180, role: 'cutoff' as const }, // Cut-off for 2nd base
-        { playerId: 'LF', x: 200, y: 100, role: 'backup' as const }, // Back up CF
-        { playerId: 'RF', x: 300, y: 100, role: 'backup' as const }, // Back up CF
-        { playerId: 'P', x: 250, y: 250, role: 'backup' as const }, // Back up throw to 2nd
-        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Make sure batter touches 1st
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
-        { playerId: '3B', x: 180, y: 280, role: 'cover' as const } // Cover 3rd
-      ],
-      runnerTargets: []
-    },
-    {
-      name: 'Single to right: bases empty',
-      ballTarget: { x: 380, y: 120 },
-      baseRunners: [],
-      movements: [
-        { playerId: 'RF', x: 380, y: 120, role: 'fielder' as const },
-        { playerId: '2B', x: 300, y: 200, role: 'cutoff' as const }, // Cut-off between RF and 2nd
-        { playerId: 'SS', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd base
-        { playerId: 'CF', x: 320, y: 100, role: 'backup' as const }, // Back up RF
-        { playerId: 'P', x: 270, y: 250, role: 'backup' as const }, // Back up throw to 2nd
-        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Check batter touches 1st
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
-        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
-        { playerId: 'LF', x: 180, y: 180, role: 'backup' as const } // Move toward infield for bad throws
-      ],
-      runnerTargets: []
-    },
-    {
-      name: 'Single to left: runner on first',
-      ballTarget: { x: 120, y: 120 },
-      baseRunners: ['1st'],
-      movements: [
-        { playerId: 'LF', x: 120, y: 120, role: 'fielder' as const },
-        { playerId: 'SS', x: 200, y: 240, role: 'cutoff' as const }, // Cut-off between LF and 3rd
-        { playerId: '3B', x: 170, y: 270, role: 'backup' as const }, // Back up SS but cover 3rd
-        { playerId: 'CF', x: 180, y: 100, role: 'backup' as const }, // Back up LF
-        { playerId: 'P', x: 220, y: 260, role: 'backup' as const }, // Back up 3rd base
-        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Check batter touches 1st
-        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
-        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Move toward infield
-      ],
-      runnerTargets: [
-        { base: '1st' as const, targetBase: '3rd' as const }
-      ]
-    },
-    {
-      name: 'Single to center: runner on first',
-      ballTarget: { x: 250, y: 80 },
-      baseRunners: ['1st'],
-      movements: [
-        { playerId: 'CF', x: 250, y: 80, role: 'fielder' as const },
-        { playerId: 'SS', x: 220, y: 240, role: 'cutoff' as const }, // Cut-off between CF and 3rd
-        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd base
-        { playerId: 'LF', x: 200, y: 100, role: 'backup' as const }, // Back up CF
-        { playerId: 'RF', x: 300, y: 100, role: 'backup' as const }, // Back up CF
-        { playerId: 'P', x: 210, y: 260, role: 'backup' as const }, // Back up 3rd
-        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Make sure batter touches 1st
-        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const } // Cover home
-      ],
-      runnerTargets: [
-        { base: '1st' as const, targetBase: '3rd' as const }
-      ]
-    },
-    {
-      name: 'Single to left: runner on second',
-      ballTarget: { x: 120, y: 120 },
-      baseRunners: ['2nd'],
-      movements: [
-        { playerId: 'LF', x: 120, y: 120, role: 'fielder' as const },
-        { playerId: '3B', x: 210, y: 300, role: 'cutoff' as const }, // Cut-off for throw to home
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home plate
-        { playerId: 'P', x: 240, y: 330, role: 'backup' as const }, // Back up throw at home
-        { playerId: 'CF', x: 180, y: 100, role: 'backup' as const }, // Back up LF
-        { playerId: '1B', x: 310, y: 270, role: 'cover' as const }, // Check batter touches 1st
-        { playerId: '2B', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
-        { playerId: 'SS', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
-        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Back up throw to 2nd
-      ],
-      runnerTargets: [
-        { base: '2nd' as const, targetBase: 'home' as const }
-      ]
-    },
-    {
-      name: 'Sacrifice bunt: runner on first',
-      ballTarget: { x: 230, y: 320 },
-      baseRunners: ['1st'],
-      movements: [
-        { playerId: 'P', x: 240, y: 300, role: 'fielder' as const }, // Cover middle of field
-        { playerId: '3B', x: 200, y: 320, role: 'fielder' as const }, // Charge toward home, cover left side
-        { playerId: '1B', x: 280, y: 300, role: 'fielder' as const }, // Charge, cover right side
-        { playerId: '2B', x: 320, y: 280, role: 'cover' as const }, // Cover 1st base
-        { playerId: 'SS', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd base
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Tell infielders where to throw
-        { playerId: 'LF', x: 160, y: 200, role: 'backup' as const }, // Come toward infield for bad throws
-        { playerId: 'CF', x: 250, y: 150, role: 'backup' as const }, // Back up throw to 2nd
-        { playerId: 'RF', x: 350, y: 200, role: 'backup' as const } // Back up throw to 1st
-      ],
-      runnerTargets: [
-        { base: '1st' as const, targetBase: '2nd' as const }
-      ]
-    },
-    {
-      name: 'Double down left field line: bases empty',
-      ballTarget: { x: 80, y: 160 },
-      baseRunners: [],
-      movements: [
-        { playerId: 'LF', x: 80, y: 160, role: 'fielder' as const },
-        { playerId: 'SS', x: 150, y: 200, role: 'cutoff' as const }, // Cut-off down left field line
-        { playerId: '2B', x: 200, y: 180, role: 'backup' as const }, // Trail position behind SS
-        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd base
-        { playerId: 'CF', x: 150, y: 120, role: 'backup' as const }, // Back up LF
-        { playerId: 'P', x: 210, y: 260, role: 'backup' as const }, // Back up 3rd base
-        { playerId: '1B', x: 300, y: 260, role: 'cover' as const }, // Trail runner to 2nd
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Cover home
-        { playerId: 'RF', x: 320, y: 180, role: 'backup' as const } // Back up throw to 2nd
-      ],
-      runnerTargets: []
-    },
-    {
-      name: 'Pop fly to shallow right field',
-      ballTarget: { x: 340, y: 180 },
-      baseRunners: [],
-      movements: [
-        { playerId: 'RF', x: 340, y: 180, role: 'fielder' as const }, // RF has priority
-        { playerId: '2B', x: 310, y: 200, role: 'backup' as const }, // Call for catch but yield to RF
-        { playerId: '1B', x: 320, y: 260, role: 'backup' as const }, // Call for catch but yield to RF
-        { playerId: 'CF', x: 320, y: 140, role: 'backup' as const }, // Back up RF
-        { playerId: 'SS', x: 250, y: 210, role: 'cover' as const }, // Cover 2nd
-        { playerId: '3B', x: 180, y: 280, role: 'cover' as const }, // Cover 3rd
-        { playerId: 'P', x: 290, y: 250, role: 'cover' as const }, // Cover 1st if needed
-        { playerId: 'C', x: 280, y: 330, role: 'backup' as const }, // Back up 1st if bases empty
-        { playerId: 'LF', x: 150, y: 200, role: 'backup' as const } // Back up throw to 3rd
-      ],
-      runnerTargets: []
-    },
-    {
-      name: 'Wheel play: sacrifice bunt with runners on 1st and 2nd',
-      ballTarget: { x: 220, y: 320 },
-      baseRunners: ['1st', '2nd'],
-      movements: [
-        { playerId: 'P', x: 240, y: 300, role: 'fielder' as const }, // Cover middle field
-        { playerId: '3B', x: 200, y: 320, role: 'fielder' as const }, // Charge and cover left side
-        { playerId: '1B', x: 280, y: 300, role: 'fielder' as const }, // Cover right side
-        { playerId: 'SS', x: 170, y: 270, role: 'cover' as const }, // Break for 3rd base for force out
-        { playerId: '2B', x: 320, y: 280, role: 'cover' as const }, // Cover 1st base
-        { playerId: 'CF', x: 250, y: 150, role: 'cover' as const }, // Cover 2nd base (no one else covering)
-        { playerId: 'C', x: 250, y: 350, role: 'cover' as const }, // Tell infielders where to throw
-        { playerId: 'LF', x: 150, y: 250, role: 'backup' as const }, // Back up throw to 3rd
-        { playerId: 'RF', x: 350, y: 200, role: 'backup' as const } // Back up throw to 1st
-      ],
-      runnerTargets: [
-        { base: '1st' as const, targetBase: '2nd' as const },
-        { base: '2nd' as const, targetBase: '2nd' as const } // Gets forced out at 3rd
-      ]
+  // Get scenarios based on level
+  const getScenariosForLevel = (level: BaseballLevel) => {
+    const infieldScenarios = [
+      {
+        name: 'Ground ball to shortstop: bases empty',
+        ballTarget: { x: 220, y: 220 },
+        baseRunners: [],
+        movements: [
+          { playerId: 'SS', x: 220, y: 220, role: 'fielder' as const },
+          { playerId: '2B', x: 250, y: 210, role: 'cover' as const },
+          { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+          { playerId: 'P', x: 270, y: 250, role: 'backup' as const },
+          { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+          { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+        ],
+        runnerTargets: []
+      },
+      {
+        name: 'Ground ball to second base: runner on first',
+        ballTarget: { x: 280, y: 220 },
+        baseRunners: ['1st'],
+        movements: [
+          { playerId: '2B', x: 280, y: 220, role: 'fielder' as const },
+          { playerId: 'SS', x: 250, y: 210, role: 'cover' as const },
+          { playerId: '1B', x: 320, y: 280, role: 'cover' as const },
+          { playerId: 'P', x: 270, y: 250, role: 'backup' as const },
+          { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+          { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+        ],
+        runnerTargets: [
+          { base: '1st' as const, targetBase: '2nd' as const }
+        ]
+      },
+      {
+        name: 'Pop up to first base: bases empty',
+        ballTarget: { x: 320, y: 250 },
+        baseRunners: [],
+        movements: [
+          { playerId: '1B', x: 320, y: 250, role: 'fielder' as const },
+          { playerId: 'P', x: 290, y: 260, role: 'backup' as const },
+          { playerId: '2B', x: 300, y: 230, role: 'backup' as const },
+          { playerId: 'SS', x: 250, y: 210, role: 'cover' as const },
+          { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+          { playerId: 'C', x: 250, y: 350, role: 'cover' as const }
+        ],
+        runnerTargets: []
+      }
+    ];
+
+    const outfieldScenarios = [
+      {
+        name: 'Single to left: bases empty',
+        ballTarget: { x: 120, y: 120 },
+        baseRunners: [],
+        movements: [
+          { playerId: 'LF', x: 120, y: 120, role: 'fielder' as const },
+          { playerId: 'SS', x: 200, y: 200, role: 'cutoff' as const },
+          { playerId: '2B', x: 250, y: 210, role: 'cover' as const },
+          { playerId: 'CF', x: 180, y: 100, role: 'backup' as const },
+          { playerId: 'P', x: 230, y: 250, role: 'backup' as const },
+          { playerId: '1B', x: 300, y: 270, role: 'cover' as const },
+          { playerId: 'C', x: 290, y: 330, role: 'backup' as const },
+          { playerId: '3B', x: 180, y: 280, role: 'cover' as const }
+        ],
+        runnerTargets: []
+      },
+      {
+        name: 'Single to right: bases empty',
+        ballTarget: { x: 380, y: 120 },
+        baseRunners: [],
+        movements: [
+          { playerId: 'RF', x: 380, y: 120, role: 'fielder' as const },
+          { playerId: '2B', x: 300, y: 200, role: 'cutoff' as const },
+          { playerId: 'SS', x: 250, y: 210, role: 'cover' as const },
+          { playerId: 'CF', x: 320, y: 100, role: 'backup' as const },
+          { playerId: 'P', x: 270, y: 250, role: 'backup' as const },
+          { playerId: '1B', x: 310, y: 270, role: 'cover' as const },
+          { playerId: 'C', x: 250, y: 350, role: 'cover' as const },
+          { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+          { playerId: 'LF', x: 180, y: 180, role: 'backup' as const }
+        ],
+        runnerTargets: []
+      }
+    ];
+
+    // Add center field scenarios for older levels
+    if (level !== 'tball' && level !== 'coach-pitch' && level !== 'minors') {
+      outfieldScenarios.push({
+        name: 'Single to center: bases empty',
+        ballTarget: { x: 250, y: 80 },
+        baseRunners: [],
+        movements: [
+          { playerId: 'CF', x: 250, y: 80, role: 'fielder' as const },
+          { playerId: '2B', x: 250, y: 210, role: 'cover' as const },
+          { playerId: 'SS', x: 230, y: 180, role: 'cutoff' as const },
+          { playerId: 'LF', x: 200, y: 100, role: 'backup' as const },
+          { playerId: 'RF', x: 300, y: 100, role: 'backup' as const },
+          { playerId: 'P', x: 250, y: 250, role: 'backup' as const },
+          { playerId: '1B', x: 310, y: 270, role: 'cover' as const },
+          { playerId: 'C', x: 250, y: 350, role: 'cover' as const },
+          { playerId: '3B', x: 180, y: 280, role: 'cover' as const }
+        ],
+        runnerTargets: []
+      });
+    } else {
+      // For younger levels, add scenarios to left center and right center
+      outfieldScenarios.push({
+        name: 'Single to left center: bases empty',
+        ballTarget: { x: 200, y: 80 },
+        baseRunners: [],
+        movements: [
+          { playerId: 'LC', x: 200, y: 80, role: 'fielder' as const },
+          { playerId: 'SS', x: 220, y: 180, role: 'cutoff' as const },
+          { playerId: '2B', x: 250, y: 210, role: 'cover' as const },
+          { playerId: 'LF', x: 160, y: 100, role: 'backup' as const },
+          { playerId: 'RC', x: 260, y: 90, role: 'backup' as const },
+          { playerId: 'P', x: 240, y: 250, role: 'backup' as const },
+          { playerId: '1B', x: 310, y: 270, role: 'cover' as const },
+          { playerId: 'C', x: 250, y: 350, role: 'cover' as const },
+          { playerId: '3B', x: 180, y: 280, role: 'cover' as const },
+          { playerId: 'RF', x: 340, y: 140, role: 'backup' as const }
+        ],
+        runnerTargets: []
+      });
     }
-  ];
+
+    // Adjust scenario distribution based on level
+    if (level === 'tball' || level === 'coach-pitch' || level === 'minors') {
+      // 70% infield, 30% outfield for younger levels
+      return [
+        ...infieldScenarios,
+        ...infieldScenarios, // Duplicate infield scenarios to increase probability
+        ...outfieldScenarios.slice(0, 2) // Fewer outfield scenarios
+      ];
+    } else {
+      // 40% infield, 60% outfield for older levels
+      return [
+        ...infieldScenarios,
+        ...outfieldScenarios,
+        ...outfieldScenarios // More outfield scenarios
+      ];
+    }
+  };
 
   const startScenario = () => {
     if (isAnimating) return;
@@ -412,8 +458,9 @@ const BaseballField = () => {
     setPlayComplete(false);
     setPlayExplanation('');
     
-    // Pick a random scenario
-    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+    // Pick a random scenario based on level
+    const availableScenarios = getScenariosForLevel(level);
+    const randomScenario = availableScenarios[Math.floor(Math.random() * availableScenarios.length)];
     setCurrentScenario(randomScenario);
     
     // Set up runners based on scenario
@@ -512,7 +559,8 @@ const BaseballField = () => {
   };
 
   const resetField = () => {
-    setPlayers(prev => prev.map(player => ({
+    const currentPlayers = getPlayersForLevel(level);
+    setPlayers(currentPlayers.map(player => ({
       ...player,
       x: player.originalX,
       y: player.originalY,
@@ -579,6 +627,24 @@ const BaseballField = () => {
       <div className="flex gap-6">
         <div className="flex-1">
           <Card className="p-6 bg-green-100 border-4 border-green-800" style={{ imageRendering: 'pixelated' }}>
+            {/* Level selector */}
+            <div className="mb-4 flex items-center justify-center gap-4">
+              <label className="text-lg font-bold font-mono text-green-800">LEAGUE LEVEL:</label>
+              <Select value={level} onValueChange={(value: BaseballLevel) => setLevel(value)}>
+                <SelectTrigger className="w-48 font-mono border-2 border-green-600">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tball">T-Ball</SelectItem>
+                  <SelectItem value="coach-pitch">Coach Pitch</SelectItem>
+                  <SelectItem value="minors">Minors</SelectItem>
+                  <SelectItem value="majors">Majors</SelectItem>
+                  <SelectItem value="pony">Pony League</SelectItem>
+                  <SelectItem value="high-school">High School</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Nintendo style field */}
             <div 
               className="relative rounded-lg overflow-hidden border-4 border-gray-800 shadow-2xl" 
@@ -823,6 +889,7 @@ const BaseballField = () => {
                 <div className="space-y-4">
                   <div className="p-3 bg-blue-200 rounded border-2 border-blue-600">
                     <h4 className="font-semibold text-blue-800 font-mono">{scenario}</h4>
+                    <p className="text-sm text-blue-700 font-mono mt-1">Level: {level.toUpperCase().replace('-', ' ')}</p>
                   </div>
                   
                   {ball.isThrown && ball.throwTarget && (
@@ -860,7 +927,18 @@ const BaseballField = () => {
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-700 font-mono">CLICK "HIT THE BALL!" TO SEE ACCURATE DEFENSIVE SCENARIOS BASED ON REAL BASEBALL STRATEGY.</p>
+                <div className="space-y-3">
+                  <p className="text-gray-700 font-mono">SELECT A LEAGUE LEVEL AND CLICK "HIT THE BALL!" TO SEE ACCURATE DEFENSIVE SCENARIOS.</p>
+                  
+                  <div className="p-3 bg-yellow-100 rounded border border-yellow-600">
+                    <h4 className="font-bold text-yellow-800 font-mono mb-2">LEVEL DIFFERENCES:</h4>
+                    <div className="text-xs font-mono space-y-1">
+                      <p><strong>T-Ball/Coach Pitch:</strong> 4 outfielders, mostly infield plays</p>
+                      <p><strong>Minors:</strong> 4 outfielders, some outfield plays</p>
+                      <p><strong>Majors+:</strong> 3 outfielders, more outfield action</p>
+                    </div>
+                  </div>
+                </div>
               )}
             </Card>
           ) : (
@@ -882,15 +960,15 @@ const BaseballField = () => {
           )}
 
           <Card className="p-6 mt-4 border-4 border-gray-600 bg-gray-100" style={{ imageRendering: 'pixelated' }}>
-            <h3 className="text-xl font-bold mb-4 font-mono">LEARN REAL DEFENSE</h3>
+            <h3 className="text-xl font-bold mb-4 font-mono">LEVEL-BASED TRAINING</h3>
             <div className="space-y-3 text-sm font-mono">
-              <p>🎯 SCENARIOS BASED ON ACTUAL DEFENSIVE SITUATIONS</p>
-              <p>✂️ SEE PROPER CUT-OFF POSITIONING AND RESPONSIBILITIES</p>
-              <p>🛡️ LEARN WHO COVERS BASES VS. WHO BACKS UP</p>
-              <p>🏃 WATCH REALISTIC RUNNER ADVANCEMENT</p>
-              <p>⚾ BALL THROWN TO THE CORRECT BASE AUTOMATICALLY</p>
-              <p>📖 DETAILED EXPLANATIONS AFTER EACH PLAY</p>
-              <p>🎓 LEARN THE "WHY" BEHIND EACH DEFENSIVE DECISION</p>
+              <p>🎯 SCENARIOS ADJUST TO YOUR LEAGUE LEVEL</p>
+              <p>⚾ YOUNGER LEVELS: MORE INFIELD PRACTICE</p>
+              <p>🥎 OLDER LEVELS: MORE OUTFIELD SITUATIONS</p>
+              <p>👶 T-BALL/COACH PITCH: 4 OUTFIELDERS</p>
+              <p>🧒 MINORS: 4 OUTFIELDERS, MIXED PLAYS</p>
+              <p>👦 MAJORS+: 3 OUTFIELDERS, ADVANCED PLAYS</p>
+              <p>📖 DETAILED EXPLANATIONS FOR EACH LEVEL</p>
             </div>
           </Card>
         </div>
