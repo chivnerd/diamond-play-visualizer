@@ -39,7 +39,7 @@ const BaseballField = () => {
   const [chickenScore, setChickenScore] = useState(0);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [lastPlayerChoice, setLastPlayerChoice] = useState<string>('');
-  const [celebrationVariant, setCelebrationVariant] = useState<'default' | 'epic' | 'legendary' | 'magical'>('default');
+  const [celebrationVariant, setCelebrationVariant] = useState<'default' | 'epic' | 'legendary' | 'magical' | 'losing'>('default');
 
   // Initialize players when level changes
   useEffect(() => {
@@ -149,7 +149,7 @@ const BaseballField = () => {
       
       // Determine celebration variant based on score and play type
       const newScore = chickenScore + chickensEarned;
-      let variant: 'default' | 'epic' | 'legendary' | 'magical' = 'default';
+      let variant: 'default' | 'epic' | 'legendary' | 'magical' | 'losing' = 'default';
       
       if (newScore >= 20) {
         variant = 'legendary';
