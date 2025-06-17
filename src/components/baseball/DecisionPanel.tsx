@@ -63,7 +63,7 @@ const DecisionPanel: React.FC<DecisionPanelProps> = ({ scenario, level, onDecisi
         fontFamily: 'monospace',
         textShadow: '1px 1px 0px rgba(255,255,255,0.5)'
       }}>
-        <p>Make the right decision to get CHICKENS! 🐔</p>
+        <p>{scenario.name}</p>
         {scenario.baseRunners.includes('1st') && (scenario.name.toLowerCase().includes('pop fly') || scenario.name.toLowerCase().includes('pop up')) && (
           <p className="text-red-800 font-bold">DOUBLE PLAY OPPORTUNITY! 🔥</p>
         )}
