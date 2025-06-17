@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface CelebrationUnicornProps {
@@ -118,7 +117,7 @@ const CelebrationUnicorn: React.FC<CelebrationUnicornProps> = ({ variant = 'defa
     <>
       <style>{unicornFlyKeyframes}</style>
       <div 
-        className="absolute top-1/2 left-0 animate-[slide-right_6s_ease-in-out] pointer-events-none z-50"
+        className="absolute top-1/2 left-0 animate-[slide-right_6s_ease-in-out] pointer-events-none z-[9999]"
         style={{
           transform: 'translateY(-50%)',
           animation: 'unicornFly 6s ease-in-out forwards'
