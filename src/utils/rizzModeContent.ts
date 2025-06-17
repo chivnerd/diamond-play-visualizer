@@ -1,5 +1,4 @@
-
-export type RizzMode = 'youtuber' | 'shakespeare' | 'spanish' | 'liljon' | 'english';
+export type RizzMode = 'youtuber' | 'shakespeare' | 'spanish' | 'liljon' | 'harrypotter' | 'english';
 
 export const getRizzModeLabel = (mode: RizzMode): string => {
   switch (mode) {
@@ -7,6 +6,7 @@ export const getRizzModeLabel = (mode: RizzMode): string => {
     case 'shakespeare': return '🎭 Shakespeare';
     case 'spanish': return '🌶️ Spanish';
     case 'liljon': return '🎵 Lil Jon';
+    case 'harrypotter': return '⚡ Harry Potter';
     case 'english': return '🇺🇸 Plain English';
   }
 };
@@ -28,6 +28,10 @@ export const getButtonText = (rizzMode: RizzMode, isCorrect: boolean): string =>
     liljon: {
       correct: 'YEAHHH! NEXT UP! OKAYYYY!',
       incorrect: 'WHAT?! TRY AGAIN! YEAHHH!'
+    },
+    harrypotter: {
+      correct: 'Brilliant! Next batter awaits!',
+      incorrect: 'Mischief managed! Try again!'
     },
     english: {
       correct: 'Great job! Next batter',
@@ -67,6 +71,13 @@ export const getCorrectExplanations = (rizzMode: RizzMode, playerChoice: string,
       "YEAHHH! OKAYYYY! Smart play right there! WHAT?! Sometimes you gotta keep it simple! YEAHHH! Respect! OKAYYYY! 🙌",
       "WHAAAAAT?! First base money! YEAHHH! OKAYYYY! You understood the assignment! WHAT?! No mistakes here! YEAHHH! 💰",
       "OKAYYYY! YEAHHH! That play was CRUNK! WHAT?! You brought the energy! YEAHHH! Keep it going! OKAYYYY! 🎉",
+    ],
+    harrypotter: [
+      "Bloody brilliant catch! Your throw to second base was pure magic! Like casting a perfect Stupefy charm - not the flashiest spell, but it gets the job done! ⚡",
+      "By Merlin's beard! A double play more magnificent than Quidditch itself! You've got the reflexes of a Seeker and the precision of a Chaser! Absolutely magical! 🧙‍♂️",
+      "Well done, young wizard! Sometimes the wisest choice is the safest one - even Hermione would approve of your calculated decision! 📚",
+      "Expecto Patronum! First base was the perfect charm for this situation! You banished doubt like casting away a Dementor! ✨",
+      "Outstanding! That play was more coordinated than a Weasley twin prank! You've definitely earned some House points! 🏆",
     ],
     english: [
       "Nice catch! Your throw to second base was a solid choice. You secured the out and made the right play.",
@@ -119,6 +130,13 @@ export const getIncorrectExplanations = (rizzMode: RizzMode, scenario: any, corr
       "WHAAAAAT?! Third base force out! YEAHHH! OKAYYYY! Stop that runner! WHAT?! You missed that one! YEAHHH! 🛑",
       "NOOOO! WHAT?! Second base was EASY! YEAHHH! OKAYYYY! They gotta run! WHAT?! Why make it hard?! YEAHHH! 🤷‍♂️",
       "WHAAAAAT?! OKAYYYY! That runner bout to score! YEAHHH! Third base was the move! WHAT?! You slept on that one! OKAYYYY! 😴",
+    ],
+    harrypotter: [
+      "Blimey! First base was right there like Platform 9¾! Don't overcomplicate things when the obvious path is clear! Even a first-year could see that! 🚂",
+      "Great galloping gargoyles! With bases loaded, you must throw home immediately! Don't let them score - that's like letting Voldemort into Hogwarts! 🏰",
+      "Merlin's pants! The force out at third was as clear as a crystal ball! You've got to stop that lead runner from advancing to scoring position! 🔮",
+      "Bloody hell! Second base was easier than a first-year Transfiguration spell! They have to run there - it's magic law! Don't make it harder than Potions class! 🧪",
+      "Crikey! That runner's about to score faster than a Golden Snitch! Third base was the play to keep them from reaching the danger zone! ⚡",
     ],
     english: [
       "First base was the better choice here. You had a guaranteed out, but you chose a riskier play. Always take the sure thing when you can!",
@@ -223,6 +241,22 @@ export const getRandomProTip = (rizzMode: RizzMode, isCorrect: boolean): string 
         'TRY AGAIN! OKAYYYY! YOU GOT THIS! WHAT?! 💪',
         'LEARN FROM IT! YEAHHH! GET BETTER! OKAYYYY! 📈',
         'NO QUIT! WHAT?! KEEP TRYING! YEAHHH! 🚫',
+      ]
+    },
+    harrypotter: {
+      correct: [
+        'Keep casting those perfect plays! You\'re a natural born Quidditch captain! ⚡',
+        'Brilliant work! You\'ve got more talent than all four Hogwarts houses combined! 🏆',
+        'Magical decision-making! Professor McGonagall would be proud! 🐱',
+        'Outstanding! You\'re playing like you\'ve got Felix Felicis in your veins! 🍀',
+        'Superb! That play was smoother than butterbeer! Keep up the enchanting work! 🧙‍♂️',
+      ],
+      incorrect: [
+        'Study your baseball spells more carefully, young apprentice! 📜',
+        'Think before you cast your throw! Even Hermione studies before acting! 🧠',
+        'Practice makes perfect! Even Harry had to train to catch the Golden Snitch! ⚡',
+        'Learn from your mistakes like Harry learned from his Defense Against the Dark Arts lessons! 📚',
+        'Don\'t be discouraged! Even the Boy Who Lived made mistakes before saving the wizarding world! 💪',
       ]
     },
     english: {
