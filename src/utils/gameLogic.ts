@@ -26,7 +26,7 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
   }
 
   // Ground ball scenarios - prioritize force outs, but first base is always an out
-  if (scenarioName.includes('ground ball') || scenarioName.includes('grounder') || scenarioName.includes('chopper')) {
+  if (scenarioName.includes('ground ball') || scenarioName.includes('grounder') || scenarioName.includes('chopper') || scenarioName.includes('roller')) {
     // Runners on 1st and 2nd - force out at 3rd is preferred, but 1st is also valid
     if (runnersOnBase.includes('1st') && runnersOnBase.includes('2nd') && !runnersOnBase.includes('3rd')) {
       return '3rd'; // Preferred, but 1st is also correct
@@ -36,14 +36,15 @@ export const getBestThrowTarget = (scenarioData: GameScenario, runnersOnBase: st
       return 'home'; // Preferred, but 1st is also correct
     }
     // Runner on 1st only - force out at 2nd is preferred, but 1st is also valid
-    if (runnersOnBase.includes('1st') && !runnersOnBase.includes('2nd')) {
+    if (runnersOnBase.includes('1st') && !runnersOnBase.includes('2nd') && !runnersOnBase.includes('3rd')) {
       return '2nd'; // Preferred, but 1st is also correct
     }
-    // Runner on 2nd only - first base is the best choice (get the sure out)
-    if (runnersOnBase.includes('2nd') && !runnersOnBase.includes('1st')) {
-      return '1st'; // Get the sure out
+    // Runner on 2nd only OR runner on 3rd only - first base is the best choice (get the sure out)
+    if ((runnersOnBase.includes('2nd') && !runnersOnBase.includes('1st')) || 
+        (runnersOnBase.includes('3rd') && !runnersOnBase.includes('1st'))) {
+      return '1st'; // Get the sure out - no force play available
     }
-    // Any ground ball scenario - first base is always a valid out
+    // Any other ground ball scenario - first base is always a valid out
     return '1st';
   }
 
@@ -90,13 +91,13 @@ export const isCorrectThrow = (playerChoice: string, scenarioData: GameScenario,
     return true;
   }
   
-  // Additional logic for ground balls (including choppers) - first base is ALWAYS a valid out
-  if (scenarioName.includes('ground ball') || scenarioName.includes('grounder') || scenarioName.includes('chopper')) {
+  // Additional logic for ground balls (including choppers and rollers) - first base is ALWAYS a valid out
+  if (scenarioName.includes('ground ball') || scenarioName.includes('grounder') || scenarioName.includes('chopper') || scenarioName.includes('roller')) {
     if (playerChoice === '1st') {
       return true; // First base is always an out on ground balls
     }
     
-    // Force out situations are also correct
+    // Force out situations are also correct ONLY when there's a runner to force
     if (runnersOnBase.includes('1st') && playerChoice === '2nd') {
       return true; // Force out at second
     }
