@@ -263,23 +263,23 @@ const BaseballField = () => {
           textShadow: '2px 2px 0px #FFFFFF, 4px 4px 0px rgba(0,0,0,0.2)',
           fontFamily: 'monospace',
           letterSpacing: '0.5px sm:1px'
-        }}>Avoid the crash out and GET CHICKENS!</p>
+        }}>Avoid the crash out and GET CHEESEBURGERS!</p>
         
-        {/* Chicken Score Display */}
+        {/* Cheeseburger Score Display */}
         <div className="mt-3 sm:mt-4 p-3 sm:p-4 border-4 border-yellow-600 inline-block" style={{
           background: 'linear-gradient(145deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
           imageRendering: 'pixelated',
           boxShadow: '6px 6px 0px #B8860B, 8px 8px 0px rgba(0,0,0,0.3)'
         }}>
           <div className="flex items-center justify-center gap-2 sm:gap-3">
-            <span className="text-xl sm:text-2xl">🐔</span>
+            <span className="text-xl sm:text-2xl">🍔</span>
             <span className="text-lg sm:text-xl font-bold font-mono text-orange-900" style={{
               fontFamily: 'monospace',
               textShadow: '2px 2px 0px #FFFFFF'
             }}>
-              CHICKENS: {chickenScore}
+              CHEESEBURGERS: {chickenScore}
             </span>
-            <span className="text-xl sm:text-2xl">🐔</span>
+            <span className="text-xl sm:text-2xl">🍔</span>
           </div>
           {chickenScore > 0 && (
             <button
