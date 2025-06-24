@@ -70,7 +70,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({
             fontFamily: 'monospace',
             textShadow: '2px 2px 0px #FFFFFF'
           }}>
-            {isCorrect ? (isDouble ? '🐔🐔 DOUBLE CHICKEN W! 🐔🐔' : '🐔 CHICKEN SECURED! 🐔') : '🚫 NO CHICKEN L + RATIO! 🚫'}
+            {isCorrect ? (isDouble ? '🍔🍔 DOUBLE HAMBURGER W! 🍔🍔' : '🍔 HAMBURGER SECURED! 🍔') : '🚫 NO HAMBURGER L + RATIO! 🚫'}
           </DialogTitle>
         </DialogHeader>
         

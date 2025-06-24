@@ -54,7 +54,7 @@ const FeedbackContent: React.FC<FeedbackContentProps> = ({
         </p>
         {isCorrect && (
           <p className="text-green-800 font-mono text-sm font-bold" style={{ fontFamily: 'monospace' }}>
-            Chickens farmed: {isDouble ? '2 (GIGA BASED)' : '1 (VALID)'}
+            Hamburgers earned: {isDouble ? '2 (GIGA BASED)' : '1 (VALID)'}
           </p>
         )}
       </div>
