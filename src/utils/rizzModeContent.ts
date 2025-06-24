@@ -50,14 +50,14 @@ export const getButtonText = (rizzMode: RizzMode, isCorrect: boolean): string =>
 export const getCorrectExplanations = (rizzMode: RizzMode, playerChoice: string, scenario: any): string => {
   const explanationSets = {
     youtuber: [
-      "SIGMA move! You caught that ball like a GOAT. Throwing to second is mid rizz but still gets you that hamburger, no cap! 💯",
-      "YOOO THAT'S BUSSIN! 🔥🔥 This is straight up GIGACHAD behavior! Double play = MAXIMUM RIZZ! Two hamburgers because you're literally HIM! W play fr fr! 💪",
+      "SIGMA move! You caught that ball like a GOAT. Throwing to second is mid rizz but still gets you that cheeseburger, no cap! 💯",
+      "YOOO THAT'S BUSSIN! 🔥🔥 This is straight up GIGACHAD behavior! Double play = MAXIMUM RIZZ! Two cheeseburgers because you're literally HIM! W play fr fr! 💪",
       "Based and valid! You chose the safe play like a true sigma. Sometimes the smart move is the W move. Respect! 🗿",
       "SHEEEESH! 🔥 First base = GUARANTEED DUB! You understood the assignment and said NO to crash outs! Absolute unit behavior! 💪",
       "YESSIR! You just locked in and made the optimal play! That's some galaxy brain energy right there! Keep serving these Ws! 🧠✨",
     ],
     shakespeare: [
-      "Hark! What noble artistry thou hast displayed upon this field of green! Thy throw to second base doth show wisdom beyond thy years, securing the hamburger with grace!",
+      "Hark! What noble artistry thou hast displayed upon this field of green! Thy throw to second base doth show wisdom beyond thy years, securing the cheeseburger with grace!",
       "By my troth! A double play most wondrous! Thou art a master of the diamond's craft, turning two with such elegance that even the gods of sport do applaud thee!",
       "Well chosen, good sir! Thy prudent decision to secure the sure out doth speak of wisdom. 'Tis better to claim one certain victory than risk folly!",
       "Lo! First base beckons and thou dost answer! Like Odysseus returning home, thy throw finds its mark with certainty divine!",
