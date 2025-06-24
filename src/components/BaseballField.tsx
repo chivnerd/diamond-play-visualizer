@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { BaseballLevel, Player, Runner, Ball, GameScenario } from '../types/baseball';
 import { getPlayersForLevel, basePositions } from '../utils/baseballPositions';
 import { getScenariosForLevel } from '../utils/baseballLevels';
@@ -41,8 +42,9 @@ const BaseballField = () => {
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [lastPlayerChoice, setLastPlayerChoice] = useState<string>('');
   const [celebrationVariant, setCelebrationVariant] = useState<'default' | 'epic' | 'legendary' | 'magical' | 'losing'>('default');
-  const [timeLeft, setTimeLeft] = useState<number>(5);
+  const [timeLeft, setTimeLeft] = useState<number>(10);
   const [timerActive, setTimerActive] = useState(false);
+  const [timerMode, setTimerMode] = useState(false);
 
   // Initialize players when level changes
   useEffect(() => {
@@ -53,11 +55,11 @@ const BaseballField = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (timerActive && timeLeft > 0) {
+    if (timerActive && timeLeft > 0 && timerMode) {
       timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
       }, 1000);
-    } else if (timerActive && timeLeft === 0) {
+    } else if (timerActive && timeLeft === 0 && timerMode) {
       // Time's up - consider it incorrect
       handlePlayerDecision('timeout');
     }
@@ -65,17 +67,17 @@ const BaseballField = () => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timerActive, timeLeft]);
+  }, [timerActive, timeLeft, timerMode]);
 
   // Start timer when awaiting decision
   useEffect(() => {
-    if (awaitingDecision) {
-      setTimeLeft(5);
+    if (awaitingDecision && timerMode) {
+      setTimeLeft(10);
       setTimerActive(true);
     } else {
       setTimerActive(false);
     }
-  }, [awaitingDecision]);
+  }, [awaitingDecision, timerMode]);
 
   const startScenario = () => {
     if (isAnimating) return;
@@ -86,7 +88,7 @@ const BaseballField = () => {
     setShowUnicorn(false);
     setPlayerDecisionCorrect(null);
     setTimerActive(false);
-    setTimeLeft(5);
+    setTimeLeft(10);
     
     // Pick a random scenario based on level
     const availableScenarios = getScenariosForLevel(level);
@@ -287,7 +289,7 @@ const BaseballField = () => {
     setLastPlayerChoice('');
     setCelebrationVariant('default');
     setTimerActive(false);
-    setTimeLeft(5);
+    setTimeLeft(10);
   };
 
   const resetScore = () => {
@@ -325,6 +327,28 @@ const BaseballField = () => {
           fontFamily: 'monospace',
           letterSpacing: '0.5px sm:1px'
         }}>Avoid the crash out and GET CHEESEBURGERS!</p>
+        
+        {/* Timer Mode Toggle */}
+        <div className="mt-3 sm:mt-4 p-3 sm:p-4 border-4 border-blue-600 inline-block mr-4" style={{
+          background: 'linear-gradient(145deg, #E3F2FD 0%, #BBDEFB 50%, #E3F2FD 100%)',
+          imageRendering: 'pixelated',
+          boxShadow: '6px 6px 0px #1976D2, 8px 8px 0px rgba(0,0,0,0.3)'
+        }}>
+          <div className="flex items-center justify-center gap-2 sm:gap-3">
+            <span className="text-lg sm:text-xl">⏰</span>
+            <label className="text-sm sm:text-base font-bold font-mono text-blue-900 cursor-pointer" style={{
+              fontFamily: 'monospace',
+              textShadow: '1px 1px 0px #FFFFFF'
+            }}>
+              TIMER MODE
+            </label>
+            <Switch
+              checked={timerMode}
+              onCheckedChange={setTimerMode}
+              className="data-[state=checked]:bg-blue-600"
+            />
+          </div>
+        </div>
         
         {/* Cheeseburger Score Display */}
         <div className="mt-3 sm:mt-4 p-3 sm:p-4 border-4 border-yellow-600 inline-block" style={{
@@ -415,24 +439,26 @@ const BaseballField = () => {
 
             {awaitingDecision && (
               <>
-                {/* Timer Display */}
-                <div className="mb-4 text-center">
-                  <div className={`inline-flex items-center gap-2 px-6 py-3 border-4 ${timeLeft <= 2 ? 'border-red-600 bg-red-100 animate-pulse' : 'border-blue-600 bg-blue-100'}`} style={{
-                    background: timeLeft <= 2 
-                      ? 'linear-gradient(145deg, #FFEBEE 0%, #FFCDD2 50%, #FFEBEE 100%)'
-                      : 'linear-gradient(145deg, #E3F2FD 0%, #BBDEFB 50%, #E3F2FD 100%)',
-                    imageRendering: 'pixelated',
-                    boxShadow: '4px 4px 0px rgba(0,0,0,0.3)'
-                  }}>
-                    <span className="text-2xl">⏰</span>
-                    <span className={`text-xl font-bold font-mono ${timeLeft <= 2 ? 'text-red-800' : 'text-blue-800'}`} style={{
-                      fontFamily: 'monospace',
-                      textShadow: '1px 1px 0px #FFFFFF'
+                {/* Timer Display - only show when timer mode is enabled */}
+                {timerMode && (
+                  <div className="mb-4 text-center">
+                    <div className={`inline-flex items-center gap-2 px-6 py-3 border-4 ${timeLeft <= 3 ? 'border-red-600 bg-red-100 animate-pulse' : 'border-blue-600 bg-blue-100'}`} style={{
+                      background: timeLeft <= 3 
+                        ? 'linear-gradient(145deg, #FFEBEE 0%, #FFCDD2 50%, #FFEBEE 100%)'
+                        : 'linear-gradient(145deg, #E3F2FD 0%, #BBDEFB 50%, #E3F2FD 100%)',
+                      imageRendering: 'pixelated',
+                      boxShadow: '4px 4px 0px rgba(0,0,0,0.3)'
                     }}>
-                      TIME LEFT: {timeLeft}s
-                    </span>
+                      <span className="text-2xl">⏰</span>
+                      <span className={`text-xl font-bold font-mono ${timeLeft <= 3 ? 'text-red-800' : 'text-blue-800'}`} style={{
+                        fontFamily: 'monospace',
+                        textShadow: '1px 1px 0px #FFFFFF'
+                      }}>
+                        TIME LEFT: {timeLeft}s
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <DecisionPanel
                   scenario={currentScenario}
