@@ -27,7 +27,7 @@ const CelebrationUnicorn: React.FC<CelebrationUnicornProps> = ({ variant = 'defa
           {config.companions.map((companion, index) => (
             <div 
               key={index}
-              className={`absolute text-2xl ${config.colors[index % config.colors.length]}`}
+              className={`absolute text-4xl ${config.colors[index % config.colors.length]}`}
               style={{ 
                 left: `${-30 + (index * 15)}px`,
                 top: `${-20 + (index % 3) * 15}px`,
