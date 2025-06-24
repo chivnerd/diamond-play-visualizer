@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -5,6 +6,7 @@ import { BaseballLevel, Player, Runner, Ball, GameScenario } from '../types/base
 import { getPlayersForLevel, basePositions } from '../utils/baseballPositions';
 import { getScenariosForLevel } from '../utils/baseballLevels';
 import { getBestThrowTarget, getPlayExplanation, isCorrectThrow, isDoublePlay } from '../utils/gameLogic';
+import { soundEffects } from '../utils/soundEffects';
 import BaseballFieldVisual from './baseball/BaseballFieldVisual';
 import GameControls from './baseball/GameControls';
 import PlayInfo from './baseball/PlayInfo';
@@ -75,6 +77,9 @@ const BaseballField = () => {
     setScenario(randomScenario.name);
     setIsAnimating(true);
 
+    // Play bat hit sound
+    soundEffects.playBatHit();
+
     // Animate ball to hit location
     setBall(prev => ({
       ...prev,
@@ -83,6 +88,9 @@ const BaseballField = () => {
       isMoving: true,
       isThrown: false
     }));
+
+    // Play whoosh sound as ball moves
+    setTimeout(() => soundEffects.playWhoosh(), 200);
 
     // Animate players
     setTimeout(() => {
@@ -120,6 +128,9 @@ const BaseballField = () => {
 
     // After ball movement, ask for player decision
     setTimeout(() => {
+      // Play glove pop when ball is caught
+      soundEffects.playGlovePop();
+
       setRunners(prev => prev.map(runner => ({
         ...runner,
         x: runner.targetX,
@@ -147,6 +158,13 @@ const BaseballField = () => {
       const chickensEarned = isDouble ? 2 : 1;
       setChickenScore(prev => prev + chickensEarned);
       
+      // Play celebration sound
+      if (isDouble || chickenScore + chickensEarned >= 5) {
+        soundEffects.playEpicCelebration();
+      } else {
+        soundEffects.playCelebration();
+      }
+      
       // Determine celebration variant based on score and play type
       const newScore = chickenScore + chickensEarned;
       let variant: 'default' | 'epic' | 'legendary' | 'magical' | 'losing' = 'default';
@@ -163,6 +181,9 @@ const BaseballField = () => {
       setShowUnicorn(true);
       setTimeout(() => setShowUnicorn(false), 6000);
     } else {
+      // Play groan sound for wrong answer
+      soundEffects.playGroan();
+      
       // Show losing unicorn for incorrect decisions
       setCelebrationVariant('losing');
       setShowUnicorn(true);
@@ -183,6 +204,11 @@ const BaseballField = () => {
         isThrown: true,
         throwTarget: playerChoice
       }));
+
+      // Play whoosh sound for throw
+      setTimeout(() => soundEffects.playWhoosh(), 100);
+      // Play glove pop when ball reaches target
+      setTimeout(() => soundEffects.playGlovePop(), 800);
     }
 
     // Generate explanation after decision
