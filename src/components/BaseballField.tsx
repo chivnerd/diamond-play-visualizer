@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,11 +41,41 @@ const BaseballField = () => {
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [lastPlayerChoice, setLastPlayerChoice] = useState<string>('');
   const [celebrationVariant, setCelebrationVariant] = useState<'default' | 'epic' | 'legendary' | 'magical' | 'losing'>('default');
+  const [timeLeft, setTimeLeft] = useState<number>(5);
+  const [timerActive, setTimerActive] = useState(false);
 
   // Initialize players when level changes
   useEffect(() => {
     setPlayers(getPlayersForLevel(level));
   }, [level]);
+
+  // Timer effect
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (timerActive && timeLeft > 0) {
+      timer = setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+    } else if (timerActive && timeLeft === 0) {
+      // Time's up - consider it incorrect
+      handlePlayerDecision('timeout');
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timerActive, timeLeft]);
+
+  // Start timer when awaiting decision
+  useEffect(() => {
+    if (awaitingDecision) {
+      setTimeLeft(5);
+      setTimerActive(true);
+    } else {
+      setTimerActive(false);
+    }
+  }, [awaitingDecision]);
 
   const startScenario = () => {
     if (isAnimating) return;
@@ -56,6 +85,8 @@ const BaseballField = () => {
     setAwaitingDecision(false);
     setShowUnicorn(false);
     setPlayerDecisionCorrect(null);
+    setTimerActive(false);
+    setTimeLeft(5);
     
     // Pick a random scenario based on level
     const availableScenarios = getScenariosForLevel(level);
@@ -147,8 +178,10 @@ const BaseballField = () => {
   };
 
   const handlePlayerDecision = (playerChoice: string) => {
-    const isCorrect = isCorrectThrow(playerChoice, currentScenario!, level);
-    const isDouble = isDoublePlay(playerChoice, currentScenario!);
+    setTimerActive(false);
+    
+    const isCorrect = playerChoice !== 'timeout' && isCorrectThrow(playerChoice, currentScenario!, level);
+    const isDouble = playerChoice !== 'timeout' && isDoublePlay(playerChoice, currentScenario!);
     setPlayerDecisionCorrect(isCorrect);
     setAwaitingDecision(false);
     setLastPlayerChoice(playerChoice);
@@ -193,8 +226,8 @@ const BaseballField = () => {
     // Show feedback popup for ALL decisions (correct and incorrect)
     setShowFeedbackPopup(true);
 
-    // Animate the ball to the chosen location (but not for catches)
-    if (playerChoice && !playerChoice.startsWith('catch')) {
+    // Animate the ball to the chosen location (but not for catches or timeout)
+    if (playerChoice && !playerChoice.startsWith('catch') && playerChoice !== 'timeout') {
       const throwPosition = basePositions[playerChoice as keyof typeof basePositions];
       setBall(prev => ({
         ...prev,
@@ -216,7 +249,7 @@ const BaseballField = () => {
       const explanation = getPlayExplanation(currentScenario!, correctThrowTarget, level);
       setPlayExplanation(explanation);
       setPlayComplete(true);
-    }, playerChoice.startsWith('catch') ? 500 : 1000); // Shorter delay for catches
+    }, (playerChoice.startsWith('catch') || playerChoice === 'timeout') ? 500 : 1000); // Shorter delay for catches and timeout
   };
 
   const nextBatter = () => {
@@ -253,6 +286,8 @@ const BaseballField = () => {
     setShowFeedbackPopup(false);
     setLastPlayerChoice('');
     setCelebrationVariant('default');
+    setTimerActive(false);
+    setTimeLeft(5);
   };
 
   const resetScore = () => {
@@ -379,11 +414,32 @@ const BaseballField = () => {
             />
 
             {awaitingDecision && (
-              <DecisionPanel
-                scenario={currentScenario}
-                level={level}
-                onDecision={handlePlayerDecision}
-              />
+              <>
+                {/* Timer Display */}
+                <div className="mb-4 text-center">
+                  <div className={`inline-flex items-center gap-2 px-6 py-3 border-4 ${timeLeft <= 2 ? 'border-red-600 bg-red-100 animate-pulse' : 'border-blue-600 bg-blue-100'}`} style={{
+                    background: timeLeft <= 2 
+                      ? 'linear-gradient(145deg, #FFEBEE 0%, #FFCDD2 50%, #FFEBEE 100%)'
+                      : 'linear-gradient(145deg, #E3F2FD 0%, #BBDEFB 50%, #E3F2FD 100%)',
+                    imageRendering: 'pixelated',
+                    boxShadow: '4px 4px 0px rgba(0,0,0,0.3)'
+                  }}>
+                    <span className="text-2xl">⏰</span>
+                    <span className={`text-xl font-bold font-mono ${timeLeft <= 2 ? 'text-red-800' : 'text-blue-800'}`} style={{
+                      fontFamily: 'monospace',
+                      textShadow: '1px 1px 0px #FFFFFF'
+                    }}>
+                      TIME LEFT: {timeLeft}s
+                    </span>
+                  </div>
+                </div>
+
+                <DecisionPanel
+                  scenario={currentScenario}
+                  level={level}
+                  onDecision={handlePlayerDecision}
+                />
+              </>
             )}
 
             {showUnicorn && <CelebrationUnicorn variant={celebrationVariant} />}
