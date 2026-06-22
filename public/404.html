@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting…</title>
+    <!--
+      GitHub Pages serves this file for any unknown path. Stash the requested
+      path so index.html can restore it, then bounce to the app root.
+    -->
+    <script>
+      (function () {
+        sessionStorage.setItem('spa-redirect', location.pathname + location.search + location.hash);
+        var base = '/diamond-play-visualizer/';
+        location.replace(base);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
