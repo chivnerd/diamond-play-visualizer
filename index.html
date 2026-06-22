@@ -16,6 +16,21 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- SPA redirect: restores the deep-link path stashed by 404.html on GitHub Pages. -->
+    <script>
+      (function () {
+        try {
+          var redirect = sessionStorage.getItem('spa-redirect');
+          if (redirect) {
+            sessionStorage.removeItem('spa-redirect');
+            history.replaceState(null, '', redirect);
+          }
+        } catch (e) {
+          // Storage unavailable — fall through and mount the app at the root.
+        }
+      })();
+    </script>
   </head>
 
   <body>

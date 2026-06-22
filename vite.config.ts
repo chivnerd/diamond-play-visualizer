@@ -5,6 +5,8 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // Served from https://<user>.github.io/diamond-play-visualizer/ on GitHub Pages.
+  base: mode === 'development' ? '/' : '/diamond-play-visualizer/',
   server: {
     host: "::",
     port: 8080,
