@@ -9,7 +9,11 @@
     -->
     <script>
       (function () {
-        sessionStorage.setItem('spa-redirect', location.pathname + location.search + location.hash);
+        try {
+          sessionStorage.setItem('spa-redirect', location.pathname + location.search + location.hash);
+        } catch (e) {
+          // Storage unavailable (private mode, blocked, or full) — redirect anyway.
+        }
         var base = '/diamond-play-visualizer/';
         location.replace(base);
       })();

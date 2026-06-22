@@ -20,10 +20,14 @@
     <!-- SPA redirect: restores the deep-link path stashed by 404.html on GitHub Pages. -->
     <script>
       (function () {
-        var redirect = sessionStorage.getItem('spa-redirect');
-        if (redirect) {
-          sessionStorage.removeItem('spa-redirect');
-          history.replaceState(null, '', redirect);
+        try {
+          var redirect = sessionStorage.getItem('spa-redirect');
+          if (redirect) {
+            sessionStorage.removeItem('spa-redirect');
+            history.replaceState(null, '', redirect);
+          }
+        } catch (e) {
+          // Storage unavailable — fall through and mount the app at the root.
         }
       })();
     </script>
