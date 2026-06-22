@@ -62,7 +62,30 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/ad46cb59-bda7-4a4a-af61-38b69dc1f8ae) and click on Share -> Publish.
+### GitHub Pages
+
+This repo is wired up to deploy to GitHub Pages automatically. The live site is:
+
+**https://chivnerd.github.io/diamond-play-visualizer/**
+
+How it works:
+
+- The workflow at `.github/workflows/deploy.yml` builds the app and publishes
+  `dist/` to Pages on every push to `main` (and can be run manually from the
+  Actions tab via "Run workflow").
+- `vite.config.ts` sets `base` to `/diamond-play-visualizer/` for production
+  builds so assets resolve under the project-page subpath, and
+  `src/App.tsx` passes that base to the router via `basename`.
+- `public/404.html` provides an SPA fallback so deep links and page refreshes
+  resolve to the app instead of a Pages 404.
+
+One-time setup (only needed once, by a repo admin): go to
+**Settings → Pages → Build and deployment** and set **Source** to
+**"GitHub Actions"**. After that, merging to `main` publishes the site.
+
+### Lovable
+
+Alternatively, open [Lovable](https://lovable.dev/projects/ad46cb59-bda7-4a4a-af61-38b69dc1f8ae) and click on Share -> Publish.
 
 ## Can I connect a custom domain to my Lovable project?
 
