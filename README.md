@@ -1,96 +1,44 @@
-# Welcome to your Lovable project
+# ⚾ Baseball Defense Trainer
 
-## Project info
+**Where should you throw the ball?** Learn to think like a real infielder — one play at a time.
 
-**URL**: https://lovable.dev/projects/ad46cb59-bda7-4a4a-af61-38b69dc1f8ae
+Baseball Defense Trainer is a fun, fast, pixel-art baseball game that teaches kids the smartest part of the game: **defensive decision-making.** A ball gets hit, the runners take off, and you have a split second to make the right play. Throw to the right base and the crowd goes wild. Throw to the wrong one and the runner is safe.
 
-## How can I edit this code?
+[**▶️ Play now →**](https://chivnerd.github.io/diamond-play-visualizer/)
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## 🧠 What you'll learn
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ad46cb59-bda7-4a4a-af61-38b69dc1f8ae) and start prompting.
+Real baseball isn't just about catching the ball — it's about knowing what to do *with* it. Baseball Defense Trainer drops you into the situations players face every game and trains the instincts that win them:
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Where's the out?** Read the play and pick the right base.
+- **Cover, cut, and back up.** See how all nine fielders move together on every hit.
+- **Turn two.** Recognize when a double play is on — and when to take the sure out.
+- **Beat the runner.** In timed mode, you've got to decide *now*, just like the real thing.
 
-**Use your preferred IDE**
+## 🎮 How it plays
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. **Pick your level.** From tee-ball all the way up to high school, the scenarios grow with the player.
+2. **Watch the play develop.** A ground ball, a pop-up, a chopper — the runners are moving.
+3. **Make the call.** Choose where to throw before the runner reaches the bag.
+4. **See why.** Every play comes with a clear explanation of the *right* answer, so you learn from every rep.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## ✨ Built to keep kids coming back
 
-Follow these steps:
+- 🏆 **Big celebrations** for great plays — epic, legendary, and even magical finishes.
+- ⏱️ **Timed mode** for players ready to feel real game pressure.
+- 📈 **Levels that grow with you,** from first-timers to serious ballplayers.
+- 🎭 **Rizz Mode** — hear the coaching in hilarious voices like Brainrot, Shakespeare, Lil Jon, Harry Potter, and more. Learning the game has never been this funny.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 👦 Who it's for
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Young players** building baseball IQ before they ever step on the field.
+- **Parents and coaches** looking for a genuinely fun way to teach defense.
+- **Anyone** who wants to finally understand what *should* happen on every play.
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+⚾ **No sign-up. No download. Just hit play and make the call.**
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-### GitHub Pages
-
-This repo is wired up to deploy to GitHub Pages automatically. The live site is:
-
-**https://chivnerd.github.io/diamond-play-visualizer/**
-
-How it works:
-
-- The workflow at `.github/workflows/deploy.yml` builds the app and publishes
-  `dist/` to Pages on every push to `main` (and can be run manually from the
-  Actions tab via "Run workflow").
-- `vite.config.ts` sets `base` to `/diamond-play-visualizer/` for production
-  builds so assets resolve under the project-page subpath, and
-  `src/App.tsx` passes that base to the router via `basename`.
-- `public/404.html` provides an SPA fallback so deep links and page refreshes
-  resolve to the app instead of a Pages 404.
-
-One-time setup (only needed once, by a repo admin): go to
-**Settings → Pages → Build and deployment** and set **Source** to
-**"GitHub Actions"**. After that, merging to `main` publishes the site.
-
-### Lovable
-
-Alternatively, open [Lovable](https://lovable.dev/projects/ad46cb59-bda7-4a4a-af61-38b69dc1f8ae) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+[**Start training →**](https://chivnerd.github.io/diamond-play-visualizer/)
