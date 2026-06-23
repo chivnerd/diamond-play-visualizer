@@ -2,6 +2,7 @@
 import React from 'react';
 import { GameScenario, BaseballLevel } from '../../types/baseball';
 import { RizzMode, getCorrectExplanations, getIncorrectExplanations, getRandomProTip } from '../../utils/rizzModeContent';
+import { getCorrectChoiceReason } from '../../utils/gameLogic';
 
 interface FeedbackContentProps {
   scenario: GameScenario;
@@ -67,11 +68,19 @@ const FeedbackContent: React.FC<FeedbackContentProps> = ({
           {isCorrect ? 'WHY THIS IS FIRE:' : 'HOW TO NOT BE MID:'}
         </h4>
         <p className="text-blue-800 font-mono text-sm" style={{ fontFamily: 'monospace' }}>
-          {isCorrect 
+          {isCorrect
             ? getCorrectExplanations(rizzMode, playerChoice, scenario)
             : getIncorrectExplanations(rizzMode, scenario, correctChoice)
           }
         </p>
+        <div className="mt-3 pt-3 border-t-2 border-blue-400">
+          <h5 className="font-bold text-blue-900 font-mono text-xs mb-1" style={{ fontFamily: 'monospace' }}>
+            THE PLAY: {getChoiceLabel(correctChoice)}
+          </h5>
+          <p className="text-blue-800 font-mono text-sm" style={{ fontFamily: 'monospace' }}>
+            {getCorrectChoiceReason(correctChoice, scenario)}
+          </p>
+        </div>
       </div>
 
       <div className="p-3 border-4 border-yellow-500" style={{

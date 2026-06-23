@@ -327,3 +327,39 @@ export const getPlayExplanation = (scenarioData: GameScenario, throwTarget: stri
 
   return explanation;
 };
+
+// A concise, scenario-specific reason for why the correct base/play was the right
+// call. Used by the feedback popup to teach the actual baseball logic, not just hype.
+export const getCorrectChoiceReason = (correctChoice: string, scenarioData: GameScenario): string => {
+  const runners = scenarioData.baseRunners;
+  const hasFirst = runners.includes('1st');
+  const hasSecond = runners.includes('2nd');
+  const basesLoaded = hasFirst && hasSecond && runners.includes('3rd');
+
+  switch (correctChoice) {
+    case 'catch':
+      return "The ball's in the air, so catching it IS the out — no throw needed. Squeeze it with two hands and you're done.";
+    case 'catch-throw-2nd':
+      return "Catch the ball first for the out, then fire to 2nd to double off the runner who took off early. Two outs on one play!";
+    case 'catch-tag-1st':
+      return "Make the catch for the out, then get the ball back to 1st to double off the runner who left the bag too soon.";
+    case 'home':
+      return basesLoaded
+        ? "Bases are loaded, so the runner on 3rd is FORCED home. A throw to HOME PLATE is the force out — and stopping a run is the most valuable out on the field."
+        : "A runner is racing to score, so HOME PLATE is where the out matters most. Cut the run down before it crosses the plate.";
+    case '3rd':
+      return hasFirst && hasSecond
+        ? "With runners on 1st and 2nd, the lead runner is FORCED to 3rd. Getting the out there keeps that runner out of scoring position."
+        : "Throwing to 3rd stops the lead runner 90 feet short of home — keep them out of scoring position.";
+    case '2nd':
+      return hasFirst
+        ? "The runner on 1st HAS to run with the batter coming, so 2nd is an easy force out — and it sets up the double play."
+        : "A throw to 2nd keeps the batter from reaching scoring position. Show that arm and shut the play down.";
+    case '1st':
+      return runners.length === 0
+        ? "Bases are empty, so 1st is your only force out. Beat the batter to the bag and take the sure out."
+        : "1st base is the guaranteed out on the batter — take the sure thing instead of risking a tougher throw.";
+    default:
+      return "This was the highest-percentage play for the situation — you read the field right.";
+  }
+};
